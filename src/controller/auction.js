@@ -95,12 +95,13 @@ export const addProperties = asyncHandler(async (req, res) => {
 
   if(banner[0]){
     uploadedBanner = await uploadFile(banner)
+
   }
 
   if(downloads[0]){
     uploadedDownloads = await uploadFile(downloads)
   }
-
+return
 
   const property = {
     title,
@@ -121,8 +122,8 @@ export const addProperties = asyncHandler(async (req, res) => {
     auctionStartTime,
     auctionEndTime,
     applicationSubmissionDate,
-    downloads: uploadedDownloads[0].result,
-    banner: uploadedBanner[0].result
+    downloads: uploadedDownloads.result,
+    banner: uploadedBanner.result
   };
 
   const result = await propertyModel.create(property)
