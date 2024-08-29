@@ -9,6 +9,15 @@ const addFilter = (pipeline, key, value, condition = null) => {
   }
 };
 
+export const getProperty = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  if (!id) {
+    res.status(500).json({ status: false, message: "Id not provided" });
+  }
+  const result = await propertyModel.findOne({ auctionId: id });
+  res.status(200).json({ status: true, result: result });
+});
+
 export const getProperties = asyncHandler(async (req, res) => {
   const {
     auctionId,
@@ -28,22 +37,26 @@ export const getProperties = asyncHandler(async (req, res) => {
   let totalPages = 0;
   let pipeline = {};
 
-
- if(auctionId){
-   addFilter(pipeline, "_id", auctionId, (id) => new mongoose.Types.ObjectId(id));
- }
- if(category){
-   addFilter(pipeline, "category", category);
- }
- if(state){
-   addFilter(pipeline, "state", state);
- }
- if(city){
-   addFilter(pipeline, "city", city);
- }
- if(bankName){
-   addFilter(pipeline, "bankName", bankName);
- }
+  if (auctionId) {
+    addFilter(
+      pipeline,
+      "_id",
+      auctionId,
+      (id) => new mongoose.Types.ObjectId(id)
+    );
+  }
+  if (category) {
+    addFilter(pipeline, "category", category);
+  }
+  if (state) {
+    addFilter(pipeline, "state", state);
+  }
+  if (city) {
+    addFilter(pipeline, "city", city);
+  }
+  if (bankName) {
+    addFilter(pipeline, "bankName", bankName);
+  }
 
   if (startDate || endDate) {
     pipeline.startDate = {};
@@ -62,13 +75,11 @@ export const getProperties = asyncHandler(async (req, res) => {
 
   const result = await propertyModel.find(pipeline).skip(skip).limit(limit);
 
-  res.status(200).json({status: true, totalPages:totalPages, data: result});
-
+  res.status(200).json({ status: true, totalPages: totalPages, data: result });
 });
 
 export const addProperties = asyncHandler(async (req, res) => {
-
-  const {banner, downloads} = req.files
+  const { banner, downloads } = req.files;
 
   const {
     title,
@@ -91,19 +102,26 @@ export const addProperties = asyncHandler(async (req, res) => {
     applicationSubmissionDate,
   } = req?.body;
 
-  let uploadedBanner, uploadedDownloads
+  let auctionId = 200000;
+  const auctionsCount = await propertyModel.countDocuments();
+  auctionId += 1 + auctionsCount;
 
-  if(banner[0]){
-    uploadedBanner = await uploadFile(banner)
+  console.log(auctionId);
 
+  let uploadedBanner, uploadedDownloads;
+
+  if (banner[0]) {
+    uploadedBanner = await uploadFile(banner);
+    console.log("banner uploaded");
   }
 
-  if(downloads[0]){
-    uploadedDownloads = await uploadFile(downloads)
+  if (downloads[0]) {
+    uploadedDownloads = await uploadFile(downloads);
+    console.log("file uploaded");
   }
-return
 
   const property = {
+    auctionId,
     title,
     category,
     state,
@@ -123,11 +141,31 @@ return
     auctionEndTime,
     applicationSubmissionDate,
     downloads: uploadedDownloads.result,
-    banner: uploadedBanner.result
+    banner: uploadedBanner.result,
   };
 
-  const result = await propertyModel.create(property)
+  const result = await propertyModel.create(property);
 
-  res.status(200).json({message:'property created', result})
+  res.status(200).json({ message: "property created", result });
+});
 
+//PATCH
+//Update property data
+
+export const updateProperty = asyncHandler(async (req, res) => {
+  console.log("updates");
+});
+
+// DELETE
+// deletes property as per mongo id
+
+export const deleteProperty = asyncHandler(async (req, res) => {
+  const { id } = req.query;
+  if (!id) {
+    res.status(500).json({ status: false, message: "id not provided" });
+  }
+  await propertyModel.findOneAndDelete(id);
+  res
+    .status(200)
+    .json({ status: true, message: "Property Deleted Successfully" });
 });

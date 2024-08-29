@@ -1,6 +1,11 @@
   import mongoose from "mongoose";
 
   const propertySchema = new mongoose.Schema({
+    auctionId: {
+      type: Number,
+      unique: true,
+      required: [true, 'Auction Id is required']
+    },
     title: {
       type: String,
       required: [true, 'title in required']
@@ -39,11 +44,11 @@
       required: [true, "Mobile Number is required"],
     },
     reservePrice: {
-      type: String,
+      type: Number,
       required: [true, "Reserve price is required"],
     },
     emd: {
-      type: String,
+      type: Number,
       required: [true, "Reserve price is required"],
     },
     serviceProvider: {
