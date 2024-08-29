@@ -7,13 +7,14 @@ import { error } from "./src/middleware/error.js";
 import contactRouter from "./src/routes/contact.js";
 import auctionRouter from "./src/routes/auction.js";
 import authRouter from "./src/routes/auth.js";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-
+app.use(cookieParser())
 
 app.use(
   cors({
@@ -32,8 +33,6 @@ app.get("/", (req, res) => {
 app.use("/api/v1/contact", contactRouter);
 app.use("/api/v1/auction", auctionRouter )
 app.use("/api/v1/auth", authRouter )
-
-
 
 app.use(error);
 app.listen(PORT, () => {

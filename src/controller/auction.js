@@ -1,4 +1,5 @@
 import { propertyModel } from "../model/property.js";
+import { uploadFile } from "../utils/cloudinary.js";
 import { asyncHandler } from "../utils/errorHandler/asyncHandler.js";
 
 const addFilter = (pipeline, key, value, condition = null) => {
@@ -49,13 +50,16 @@ export const getProperties = asyncHandler(async (req, res) => {
 
   const result = await propertyModel.find({ pipeline }).skip(skip).limit(limit);
 
+  res.status(200).json({status: true, totalPages:totalPages, data: result});
 
-
-  res.status(200).json({status: true, totalPages:totalPages, data: result})
 });
 
 export const addProperties = asyncHandler(async (req, res) => {
+
+  const {banner, downloads} = req.files
+
   const {
+    title,
     category,
     state,
     city,
@@ -75,7 +79,19 @@ export const addProperties = asyncHandler(async (req, res) => {
     applicationSubmissionDate,
   } = req?.body;
 
+  let uploadedBanner, uploadedDownloads
+
+  if(banner[0]){
+    uploadedBanner = await uploadFile(banner)
+  }
+
+  if(downloads[0]){
+    uploadedDownloads = await uploadFile(downloads)
+  }
+
+
   const property = {
+    title,
     category,
     state,
     city,
@@ -93,10 +109,12 @@ export const addProperties = asyncHandler(async (req, res) => {
     auctionStartTime,
     auctionEndTime,
     applicationSubmissionDate,
+    downloads: uploadedDownloads[0].result,
+    banner: uploadedBanner[0].result
   };
 
   const result = await propertyModel.create(property)
 
-  res.status(200).send('property created', result)
+  res.status(200).json({message:'property created', result})
 
 });
