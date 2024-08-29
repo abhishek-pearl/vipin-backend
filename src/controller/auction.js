@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { propertyModel } from "../model/property.js";
 import { uploadFile } from "../utils/cloudinary.js";
 import { asyncHandler } from "../utils/errorHandler/asyncHandler.js";
@@ -27,11 +28,22 @@ export const getProperties = asyncHandler(async (req, res) => {
   let totalPages = 0;
   let pipeline = {};
 
-  addFilter(pipeline, "_id", auctionId, (id) => mongoose.Types.ObjectId(id));
-  addFilter(pipeline, "category", category);
-  addFilter(pipeline, "state", state);
-  addFilter(pipeline, "city", city);
-  addFilter(pipeline, "bankName", bankName);
+
+ if(auctionId){
+   addFilter(pipeline, "_id", auctionId, (id) => new mongoose.Types.ObjectId(id));
+ }
+ if(category){
+   addFilter(pipeline, "category", category);
+ }
+ if(state){
+   addFilter(pipeline, "state", state);
+ }
+ if(city){
+   addFilter(pipeline, "city", city);
+ }
+ if(bankName){
+   addFilter(pipeline, "bankName", bankName);
+ }
 
   if (startDate || endDate) {
     pipeline.startDate = {};
@@ -48,7 +60,7 @@ export const getProperties = asyncHandler(async (req, res) => {
   const totalAuctions = await propertyModel.countDocuments({ pipeline });
   totalPages = Math.ceil(totalAuctions / limit);
 
-  const result = await propertyModel.find({ pipeline }).skip(skip).limit(limit);
+  const result = await propertyModel.find(pipeline).skip(skip).limit(limit);
 
   res.status(200).json({status: true, totalPages:totalPages, data: result});
 
