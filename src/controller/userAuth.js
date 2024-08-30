@@ -5,22 +5,23 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { saveAccessTokenToCookie } from "../utils/index.js";
 import { accessTokenValidity, refreshTokenValidity } from "../utils/index.js";
-import {authModel} from '../model/auth.js'
+import { userAuthModel } from "../model/userAuth.js";
 
 // -------------------------------------------------------------------------------------------
 // @desc - to fetch the users data
 // @route - GET /auth/login
 // @access - PUBLIC
 export const login = asyncHandler(async (req, res) => {
-  const { userName, password } = req.body;
+  const { fullName, password } = req.body;
 
-  if (!userName && !password) {
+
+  if (!fullName && !password) {
     return res
       .status(400)
       .json({ success: false, message: "All fields are required" });
   }
 
-  const user = await authModel.findOne({ userName });
+  const user = await userAuthModel.findOne({ fullName });
 
   if (!user) {
     return res
@@ -53,9 +54,7 @@ export const login = asyncHandler(async (req, res) => {
   return res.status(200).json({
     success: true,
     message: "Logged in Successfully",
-    user: {
-      userName: user?.userName,
-    },
+    user: user,
   });
 });
 
@@ -64,16 +63,16 @@ export const login = asyncHandler(async (req, res) => {
 // @access - PUBLIC
 
 export const refreshToken = asyncHandler(async (req, res) => {
-  const { userName } = req.body;
+  const { fullName } = req.body;
 
-  if (!userName) {
+  if (!fullName) {
     return res.status(400).json({
       success: false,
-      message: "userName is required to generate Refresh Token",
+      message: "fullName is required to generate Refresh Token",
     });
   }
 
-  const user = await authModel.findOne({ userName });
+  const user = await userAuthModel.findOne({ fullName });
 
   if (!user) {
     return res
@@ -158,19 +157,19 @@ export const refreshToken = asyncHandler(async (req, res) => {
 
 // @desc -signup for client panel
 // @route - POST /auth/signup
+
 export const signup = asyncHandler(async (req, res) => {
-  const { password, userName, email } = req?.body;
-  // Papaya@123
-  const isUserExists = await authModel.findOne({ userName });
+
+   const {password} = req.body
+ const isUserExists = await userAuthModel.findOne({fullname:req.body.fullName} );
   if (isUserExists)
     res.status(404).json({ status: false, message: "User already Exists" });
 
   const hashPassword = await bcrypt.hash(password, 10);
 
-  const savedUser = await authModel.create({
-    userName: userName,
-    password: hashPassword,
-    email: email
+  const savedUser = await userAuthModel.create({
+    ...req?.body,
+    password:hashPassword
   });
 
   res.status(200).json({

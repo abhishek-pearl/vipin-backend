@@ -19,6 +19,7 @@ export const getProperty = asyncHandler(async (req, res) => {
 });
 
 export const getProperties = asyncHandler(async (req, res) => {
+
   const {
     auctionId,
     category,
@@ -73,8 +74,12 @@ export const getProperties = asyncHandler(async (req, res) => {
   const totalAuctions = await propertyModel.countDocuments({ pipeline });
   totalPages = Math.ceil(totalAuctions / limit);
 
-  const result = await propertyModel.find(pipeline).select('auctionId title').skip(skip).limit(limit);
-
+  if(req?.isAuth){
+    console.log(true,"asbashcb");
+    var result = await propertyModel.find(pipeline).skip(skip).limit(limit);
+  }else{
+    var result = await propertyModel.find(pipeline).select('title category state city area description bankName reservePrice emd serviceProvider borrowerName propertyType auctionType auctionStartTime auctionEndTime applicationSubmissionDate').skip(skip).limit(limit);
+  }
   res.status(200).json({ status: true, totalPages: totalPages, data: result });
 });
 
@@ -119,7 +124,7 @@ export const addProperties = asyncHandler(async (req, res) => {
     uploadedDownloads = await uploadFile(downloads);
     console.log("file uploaded");
   }
-
+console.log(uploadedDownloads)
   const property = {
     auctionId,
     title,

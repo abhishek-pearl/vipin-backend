@@ -8,7 +8,7 @@ export const verifyTokenMiddleware = async (req, res, next) => {
     const cookies = req?.cookies;
     const access_token = cookies?.VIPINBHAIIKA_ACCESS_TOKEN;
 
-    console.log('cookies',cookies)
+    // console.log('cookies',cookies)
 
     if (!access_token) {
       return res.status(403).json({
@@ -26,6 +26,7 @@ export const verifyTokenMiddleware = async (req, res, next) => {
             message: "Unauthorized token! Please Check Your Login Credentials",
           });
         }
+        req.isAuth = true
         next();
       }
     );

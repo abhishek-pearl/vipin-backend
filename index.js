@@ -8,6 +8,7 @@ import contactRouter from "./src/routes/contact.js";
 import auctionRouter from "./src/routes/auction.js";
 import authRouter from "./src/routes/auth.js";
 import cookieParser from "cookie-parser";
+import userAuthRouter from "./src/routes/userAuth.js";
 
 dotenv.config();
 const app = express();
@@ -33,6 +34,7 @@ app.get("/", (req, res) => {
 app.use("/api/v1/contact", contactRouter);
 app.use("/api/v1/auction", auctionRouter )
 app.use("/api/v1/auth", authRouter )
+app.use("/api/v1/user", userAuthRouter )
 
 app.use(error);
 app.listen(PORT, () => {
