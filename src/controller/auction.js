@@ -73,7 +73,7 @@ export const getProperties = asyncHandler(async (req, res) => {
   const totalAuctions = await propertyModel.countDocuments({ pipeline });
   totalPages = Math.ceil(totalAuctions / limit);
 
-  const result = await propertyModel.find(pipeline).skip(skip).limit(limit);
+  const result = await propertyModel.find(pipeline).select('auctionId title').skip(skip).limit(limit);
 
   res.status(200).json({ status: true, totalPages: totalPages, data: result });
 });
