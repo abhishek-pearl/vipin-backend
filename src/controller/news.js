@@ -43,7 +43,7 @@ export const createNews = asyncHandler(async (req, res) => {
 });
 
 export const updatesNews = asyncHandler(async (req, res) => {
-  const { id } = req.query;
+  const { id } = req.params;
   const { title, description, url } = req.body;
   if (!id) {
     res.status(500).json({ status: false, message: "id not provided" });
@@ -56,7 +56,7 @@ export const updatesNews = asyncHandler(async (req, res) => {
 // DELETE
 // deletes news as per mongo id
 export const deleteNews = asyncHandler(async (req, res) => {
-  const { id } = req.query;
+  const { id } = req.params;
   if (!id) {
     res.status(500).json({ status: false, message: "id not provided" });
   }
