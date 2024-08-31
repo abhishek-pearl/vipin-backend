@@ -69,7 +69,7 @@ const propertySchema = new mongoose.Schema({
     required: [true, "Borrower Name is required"],
   },
   auctionStartDate: {
-    type: String,
+    type: Date,
     required: [true, "Auction start date is required"],
   },
   auctionStartTime: {
@@ -77,7 +77,7 @@ const propertySchema = new mongoose.Schema({
     required: [true, "auctionStartTime is required"],
   },
   auctionEndDate: {
-    type: String,
+    type: Date,
     required: [true, "Auction end date is required"],
   },
   auctionEndTime: {

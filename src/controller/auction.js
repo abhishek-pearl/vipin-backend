@@ -25,8 +25,8 @@ export const getProperties = asyncHandler(async (req, res) => {
     state,
     city,
     bankName,
-    startDate,
-    endDate,
+    auctionStart,
+    auctionEnd,
     minPrice,
     maxPrice,
   } = req.query;
@@ -52,10 +52,10 @@ export const getProperties = asyncHandler(async (req, res) => {
     addFilter(pipeline, "bankName", bankName);
   }
 
-  if (startDate || endDate) {
-    pipeline.startDate = {};
-    if (startDate) pipeline.startDate.$gte = new Date(startDate);
-    if (endDate) pipeline.startDate.$lte = new Date(endDate);
+  if (auctionStart || auctionEnd) {
+    pipeline.auctionStartDate = {};
+    if (auctionStart) pipeline.auctionStartDate.$gte = new Date(auctionStart);
+    if (auctionEnd) pipeline.auctionStartDate.$lte = new Date(auctionEnd);
   }
 
   if (minPrice || maxPrice) {
@@ -75,7 +75,7 @@ export const getProperties = asyncHandler(async (req, res) => {
     var result = await propertyModel
       .find(pipeline)
       .select(
-        "title category state city area description bankName reservePrice emd serviceProvider borrowerName propertyType auctionType auctionStartTime auctionEndTime applicationSubmissionDate"
+        "title category state city area description bankName reservePrice emd serviceProvider borrowerName propertyType auctionType auctionStartDate auctionStartTime auctionEndDate auctionEndTime applicationSubmissionDate"
       )
       .skip(skip)
       .limit(limit);
@@ -142,9 +142,9 @@ export const addProperties = asyncHandler(async (req, res) => {
     borrowerName,
     propertyType,
     auctionType,
-    auctionStartDate,
+    auctionStartDate: new Date(auctionStartDate),
     auctionStartTime,
-    auctionEndDate,
+    auctionEndDate: new Date(auctionEndDate),
     auctionEndTime,
     applicationSubmissionDate,
     downloads: uploadedDownloads.result,
