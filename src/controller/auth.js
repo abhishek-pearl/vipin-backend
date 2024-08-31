@@ -1,6 +1,5 @@
 // ----------------------------------------Imports-----------------------------------------------
 import { asyncHandler } from "../utils/errorHandler/asyncHandler.js";
-
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { saveAccessTokenToCookie } from "../utils/index.js";
