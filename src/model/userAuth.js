@@ -8,12 +8,12 @@ const userAuthSchema = new mongoose.Schema({
   email: {
     type: String,
     required: [true, "email is required"],
-    // unique: true,
+    unique: true,
   },
   phone: {
     type: String,
     required: [true, "phone is required"],
-    // unique: true
+    unique: true
   },
   city: {
     type: String,
