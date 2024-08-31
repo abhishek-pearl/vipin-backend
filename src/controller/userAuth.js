@@ -12,21 +12,21 @@ import { userAuthModel } from "../model/userAuth.js";
 // @route - GET /auth/login
 // @access - PUBLIC
 export const login = asyncHandler(async (req, res) => {
-  const { fullName, password } = req.body;
+  const { email, password } = req.body;
 
 
-  if (!fullName && !password) {
+  if (!email && !password) {
     return res
       .status(400)
       .json({ success: false, message: "All fields are required" });
   }
 
-  const user = await userAuthModel.findOne({ fullName });
+  const user = await userAuthModel.findOne({ email });
 
   if (!user) {
     return res
       .status(404)
-      .json({ success: false, message: "Incorrect UserName/Password" });
+      .json({ success: false, message: "Incorrect E-Mail/Password" });
   }
 
   //matching password using bcrypt
@@ -35,7 +35,7 @@ export const login = asyncHandler(async (req, res) => {
   if (!matchPassword) {
     return res
       .status(401)
-      .json({ success: false, message: "Incorrect UserName/Password" });
+      .json({ success: false, message: "Incorrect E-Mail/Password" });
   }
 
   // accessToken - Generating Access Token

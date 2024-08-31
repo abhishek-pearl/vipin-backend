@@ -19,7 +19,6 @@ export const getProperty = asyncHandler(async (req, res) => {
 });
 
 export const getProperties = asyncHandler(async (req, res) => {
-
   const {
     auctionId,
     category,
@@ -37,14 +36,8 @@ export const getProperties = asyncHandler(async (req, res) => {
   const skip = (page - 1) * limit;
   let totalPages = 0;
   let pipeline = {};
-
   if (auctionId) {
-    addFilter(
-      pipeline,
-      "_id",
-      auctionId,
-      (id) => new mongoose.Types.ObjectId(id)
-    );
+    addFilter(pipeline, "auctionId", auctionId);
   }
   if (category) {
     addFilter(pipeline, "category", category);
@@ -71,14 +64,21 @@ export const getProperties = asyncHandler(async (req, res) => {
     if (maxPrice) pipeline.price.$lte = parseFloat(maxPrice);
   }
 
+  console.log(pipeline);
+
   const totalAuctions = await propertyModel.countDocuments({ pipeline });
   totalPages = Math.ceil(totalAuctions / limit);
 
-  if(req?.isAuth){
-    console.log(true,"asbashcb");
+  if (req?.isAuth) {
     var result = await propertyModel.find(pipeline).skip(skip).limit(limit);
-  }else{
-    var result = await propertyModel.find(pipeline).select('title category state city area description bankName reservePrice emd serviceProvider borrowerName propertyType auctionType auctionStartTime auctionEndTime applicationSubmissionDate').skip(skip).limit(limit);
+  } else {
+    var result = await propertyModel
+      .find(pipeline)
+      .select(
+        "title category state city area description bankName reservePrice emd serviceProvider borrowerName propertyType auctionType auctionStartTime auctionEndTime applicationSubmissionDate"
+      )
+      .skip(skip)
+      .limit(limit);
   }
   res.status(200).json({ status: true, totalPages: totalPages, data: result });
 });
@@ -102,7 +102,9 @@ export const addProperties = asyncHandler(async (req, res) => {
     borrowerName,
     propertyType,
     auctionType,
+    auctionStartDate,
     auctionStartTime,
+    auctionEndDate,
     auctionEndTime,
     applicationSubmissionDate,
   } = req?.body;
@@ -110,8 +112,6 @@ export const addProperties = asyncHandler(async (req, res) => {
   let auctionId = 200000;
   const auctionsCount = await propertyModel.countDocuments();
   auctionId += 1 + auctionsCount;
-
-  console.log(auctionId);
 
   let uploadedBanner, uploadedDownloads;
 
@@ -124,7 +124,7 @@ export const addProperties = asyncHandler(async (req, res) => {
     uploadedDownloads = await uploadFile(downloads);
     console.log("file uploaded");
   }
-console.log(uploadedDownloads)
+  console.log(uploadedDownloads);
   const property = {
     auctionId,
     title,
@@ -142,7 +142,9 @@ console.log(uploadedDownloads)
     borrowerName,
     propertyType,
     auctionType,
+    auctionStartDate,
     auctionStartTime,
+    auctionEndDate,
     auctionEndTime,
     applicationSubmissionDate,
     downloads: uploadedDownloads.result,
