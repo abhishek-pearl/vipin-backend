@@ -16,11 +16,16 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(cookieParser())
+app.use(cookieParser());
 
 app.use(
   cors({
-    origin: ["http://localhost:3000","http://localhost:3001","http://localhost:5173", "https://vipin-mern.vercel.app"],
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "http://localhost:5173",
+      "https://vipin-mern.vercel.app",
+    ],
     credentials: true,
     methods: ["GET", "PUT", "POST", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization", "x-csrf-token"],
@@ -28,17 +33,15 @@ app.use(
   })
 );
 
-
 app.get("/", (req, res) => {
   res.send("It Works");
 });
 
 app.use("/api/v1/contact", contactRouter);
-app.use("/api/v1/auction", auctionRouter )
-app.use("/api/v1/auth", authRouter )
-app.use("/api/v1/user", userAuthRouter )
-app.use("/api/v1/news", newsRouter )
-
+app.use("/api/v1/auction", auctionRouter);
+app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/user", userAuthRouter);
+app.use("/api/v1/news", newsRouter);
 
 app.use(error);
 app.listen(PORT, () => {

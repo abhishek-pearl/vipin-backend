@@ -14,7 +14,18 @@ export const getProperty = asyncHandler(async (req, res) => {
   if (!id) {
     res.status(500).json({ status: false, message: "Id not provided" });
   }
-  const result = await propertyModel.findOne({ auctionId: id });
+  
+  if (req?.isAuth) {
+    
+    var result = await propertyModel.findOne({ auctionId: id });
+  } else {
+    
+    var result = await propertyModel.findOne({ auctionId: id })
+      .select(
+        "auctionId title category state city area description bankName reservePrice emd serviceProvider borrowerName propertyType auctionType auctionStartDate auctionStartTime auctionEndDate auctionEndTime applicationSubmissionDate"
+      )
+
+    }
   res.status(200).json({ status: true, result: result });
 });
 
@@ -64,14 +75,17 @@ export const getProperties = asyncHandler(async (req, res) => {
     if (maxPrice) pipeline.price.$lte = parseFloat(maxPrice);
   }
 
-  console.log(pipeline);
+  // console.log(pipeline);
 
   const totalAuctions = await propertyModel.countDocuments({ pipeline });
   totalPages = Math.ceil(totalAuctions / limit);
 
   if (req?.isAuth) {
+    console.log('calling this')
     var result = await propertyModel.find(pipeline).skip(skip).limit(limit);
   } else {
+    console.log('calling without auth')
+
     var result = await propertyModel
       .find(pipeline)
       .select(
