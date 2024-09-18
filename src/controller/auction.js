@@ -22,7 +22,7 @@ export const getProperty = asyncHandler(async (req, res) => {
     
     var result = await propertyModel.findOne({ auctionId: id })
       .select(
-        "auctionId title category state city area description bankName reservePrice emd serviceProvider borrowerName propertyType auctionType auctionStartDate auctionStartTime auctionEndDate auctionEndTime applicationSubmissionDate"
+        "banner auctionId title category state city area description bankName reservePrice emd serviceProvider borrowerName propertyType auctionType auctionStartDate auctionStartTime auctionEndDate auctionEndTime applicationSubmissionDate"
       )
 
     }
@@ -89,7 +89,7 @@ export const getProperties = asyncHandler(async (req, res) => {
     var result = await propertyModel
       .find(pipeline)
       .select(
-        "auctionId title category state city area description bankName reservePrice emd serviceProvider borrowerName propertyType auctionType auctionStartDate auctionStartTime auctionEndDate auctionEndTime applicationSubmissionDate"
+        "banner auctionId title category state city area description bankName reservePrice emd serviceProvider borrowerName propertyType auctionType auctionStartDate auctionStartTime auctionEndDate auctionEndTime applicationSubmissionDate"
       )
       .skip(skip)
       .limit(limit);
