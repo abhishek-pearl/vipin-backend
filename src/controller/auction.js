@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import { propertyModel } from "../model/property.js";
 import { uploadFile } from "../utils/cloudinary.js";
 import { asyncHandler } from "../utils/errorHandler/asyncHandler.js";
