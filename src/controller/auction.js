@@ -13,18 +13,16 @@ export const getProperty = asyncHandler(async (req, res) => {
   if (!id) {
     res.status(500).json({ status: false, message: "Id not provided" });
   }
-  
+
   if (req?.isAuth) {
-    
     var result = await propertyModel.findOne({ auctionId: id });
   } else {
-    
-    var result = await propertyModel.findOne({ auctionId: id })
+    var result = await propertyModel
+      .findOne({ auctionId: id })
       .select(
         "banner auctionId title category state city area description bankName reservePrice emd serviceProvider borrowerName propertyType auctionType auctionStartDate auctionStartTime auctionEndDate auctionEndTime applicationSubmissionDate"
-      )
-
-    }
+      );
+  }
   res.status(200).json({ status: true, result: result });
 });
 
@@ -69,21 +67,19 @@ export const getProperties = asyncHandler(async (req, res) => {
   }
 
   if (minPrice || maxPrice) {
-    pipeline.price = {};
-    if (minPrice) pipeline.price.$gte = parseFloat(minPrice);
-    if (maxPrice) pipeline.price.$lte = parseFloat(maxPrice);
+    pipeline.reservePrice = {};
+    if (minPrice) pipeline.reservePrice.$gte = parseFloat(minPrice);
+    if (maxPrice) pipeline.reservePrice.$lte = parseFloat(maxPrice);
   }
-
-  // console.log(pipeline);
 
   const totalAuctions = await propertyModel.countDocuments({ pipeline });
   totalPages = Math.ceil(totalAuctions / limit);
 
   if (req?.isAuth) {
-    console.log('calling this')
+    console.log("calling with auth");
     var result = await propertyModel.find(pipeline).skip(skip).limit(limit);
   } else {
-    console.log('calling without auth')
+    console.log("calling without auth");
 
     var result = await propertyModel
       .find(pipeline)
