@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { saveAccessTokenToCookie } from "../utils/index.js";
 import { accessTokenValidity, refreshTokenValidity } from "../utils/index.js";
-import {authModel} from '../model/auth.js'
+import { authModel } from "../model/auth.js";
 
 // -------------------------------------------------------------------------------------------
 // @desc - to fetch the users data
@@ -40,7 +40,7 @@ export const login = asyncHandler(async (req, res) => {
   const accessToken = jwt.sign(
     {
       id: user._id,
-      isAuth:true
+      isAuth: true,
     },
     process.env.ACCESS_TOKEN_SECRET,
     { expiresIn: accessTokenValidity }
@@ -169,7 +169,7 @@ export const signup = asyncHandler(async (req, res) => {
   const savedUser = await authModel.create({
     userName: userName,
     password: hashPassword,
-    email: email
+    email: email,
   });
 
   res.status(200).json({
