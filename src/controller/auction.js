@@ -176,7 +176,7 @@ export const updateProperty = asyncHandler(async (req, res) => {
 // deletes property as per mongo id
 
 export const deleteProperty = asyncHandler(async (req, res) => {
-  const { id } = req.query;
+  const { id } = req.params;
   if (!id) {
     res.status(500).json({ status: false, message: "id not provided" });
   }
