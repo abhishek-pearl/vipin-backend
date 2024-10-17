@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 import { saveAccessTokenToCookie } from "../utils/index.js";
 import { accessTokenValidity, refreshTokenValidity } from "../utils/index.js";
 import { userAuthModel } from "../model/userAuth.js";
+import errorResponse from "../utils/errorHandler/errorResponse.js";
 
 // -------------------------------------------------------------------------------------------
 // @desc - to fetch the users data
@@ -191,3 +192,17 @@ export const logout = asyncHandler(async (req, res) => {
     message: "Logged Out Successfully",
   });
 });
+
+
+//@desc when user completes its payment.
+export const getUserData = asyncHandler(async (req,res,next)=>{
+      
+  const user = await userAuthModel.findOne({_id:req.userData.id});
+
+  if(!user)
+  {
+    next(new errorResponse("User Details Not Found ",404));
+  }
+  res.status(200).json({status:true,message:"User Data Fetched Successfully !!",user})
+})
+

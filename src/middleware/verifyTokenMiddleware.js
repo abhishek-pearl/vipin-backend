@@ -19,6 +19,7 @@ export const verifyTokenMiddleware = async (req, res, next) => {
       access_token,
       process.env.ACCESS_TOKEN_SECRET,
       async (error, user) => {
+        console.log("currentUser",user);
         if (error) {
           return res.status(403).json({
             success: false,
@@ -26,6 +27,7 @@ export const verifyTokenMiddleware = async (req, res, next) => {
           });
         }
         req.isAuth = true;
+        req.userData = user;
         next();
       }
     );

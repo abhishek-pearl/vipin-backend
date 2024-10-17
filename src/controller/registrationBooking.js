@@ -67,19 +67,20 @@ export const verifyOrder = asyncHandler(async (req,res,next)=>{
     .digest('hex');
 
 
-    if(!expectedSignature === razorpay_signature)
+    if(expectedSignature !== razorpay_signature)
     {
       await registrationOrderModel.findByIdAndDelete(orderId);
 
-      res.redirect(`${process.env.BASE_URL}/paymentFailed`);
+      return res.redirect(`${process.env.BASE_URL}/paymentFailed`);
     }
     
     await userAuthModel.findOneAndUpdate({_id:orderData?.userId},{
         isSubscribed:true,
         subscriptionDate:orderData?.orderDate||'something went wrong'
     })
-
-    res.redirect(`${process.env.BASE_URL}/auctionProperties`);
+     console.log("emhhsfjend");
+    // return res.redirect(`${process.env.BASE_URL}/auctionProperties`);
+    res.status(200).json({status:true,message:"Updated Successfully "});
 
 
 
