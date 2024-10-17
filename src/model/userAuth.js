@@ -30,12 +30,17 @@ const userAuthSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, "password is required"],
+    select:false
   },
   isSubscribed: {
     type: Boolean,
     required: [true, "password is required"],
-    default: true
+    default: false
   },
+  subscriptionDate:{
+    type:String,
+    default:""
+  }
 
 },{timestamps:true});
 

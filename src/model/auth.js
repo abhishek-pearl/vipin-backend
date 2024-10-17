@@ -13,6 +13,8 @@ const authSchema = new mongoose.Schema({
     type: String,
     required: [true, "email is required"],
   },
+
+
 });
 
 export const authModel = mongoose.model("auth", authSchema, "auth");

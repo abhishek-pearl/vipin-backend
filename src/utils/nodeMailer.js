@@ -212,3 +212,10 @@ export const sendContactMail = async (userData) => {
     });
   
   };
+
+
+//verification mail
+
+
+
+
