@@ -21,7 +21,9 @@ export const login = asyncHandler(async (req, res) => {
       .json({ success: false, message: "All fields are required" });
   }
 
-  const user = await userAuthModel.findOne({ email });
+  const user = await userAuthModel.findOne({ email }).select('+password');
+  
+  console.log("user",user);
 
   if (!user) {
     return res
@@ -50,7 +52,7 @@ export const login = asyncHandler(async (req, res) => {
 
   // Saving accessToken to the httpOnly Cookie
   saveAccessTokenToCookie(res, accessToken);
-
+  user.password = undefined;
   return res.status(200).json({
     success: true,
     message: "Logged in Successfully",
