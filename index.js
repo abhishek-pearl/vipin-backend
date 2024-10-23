@@ -26,7 +26,7 @@ app.use(
       "http://localhost:3001",
       "http://localhost:3002",
       "http://localhost:5173",
-      "https://vipin-mern.vercel.app/",
+      "https://vipin-mern.vercel.app",
     ],
     credentials: true,
     methods: ["GET", "PUT", "POST", "PATCH", "DELETE"],
