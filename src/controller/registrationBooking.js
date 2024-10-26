@@ -8,9 +8,9 @@ import crypto from "crypto";
 
 //post api/v1/bookings
 export const bookingOrder = asyncHandler(async (req,res,next)=>{
-    
-    const validUser = await userAuthModel.findById(req.body.userId)
-    const {userId,amount,currency,order} = req.body;
+    const {userId} = req;
+    const validUser = await userAuthModel.findOne({_id:userId});
+    const {amount,currency,order} = req.body;
     if(!validUser)
     {
         return res.status(401).json({status:true,message:"Bad Request User Does Not Exists !!"})
@@ -78,7 +78,6 @@ export const verifyOrder = asyncHandler(async (req,res,next)=>{
         isSubscribed:true,
         subscriptionDate:orderData?.orderDate||'something went wrong'
     })
-     console.log("emhhsfjend");
     // return res.redirect(`${process.env.BASE_URL}/auctionProperties`);
     res.status(200).json({status:true,message:"Updated Successfully "});
 
