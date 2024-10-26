@@ -26,6 +26,7 @@ export const verifyTokenMiddleware = async (req, res, next) => {
           });
         }
         req.isAuth = true;
+        req.userId = user.id;
         next();
       }
     );
