@@ -8,8 +8,8 @@ import crypto from "crypto";
 
 //post api/v1/bookings
 export const bookingOrder = asyncHandler(async (req, res, next) => {
-  console.log("dfsafas", req.userId);
-  const validUser = await userAuthModel.findOne({ _id: req.userId });
+  const { userId } = req;
+  const validUser = await userAuthModel.findOne({ _id: userId });
   const { amount, currency, order } = req.body;
   if (!validUser) {
     return res
@@ -77,8 +77,11 @@ export const verifyOrder = asyncHandler(async (req, res, next) => {
 
   if (!expectedSignature === razorpay_signature) {
     await registrationOrderModel.findByIdAndDelete(orderId);
+  }
+  if (expectedSignature !== razorpay_signature) {
+    await registrationOrderModel.findByIdAndDelete(orderId);
 
-    res.redirect(`${process.env.BASE_URL}/paymentFailed`);
+    return res.redirect(`${process.env.BASE_URL}/paymentFailed`);
   }
 
   await userAuthModel.findOneAndUpdate(
@@ -88,7 +91,6 @@ export const verifyOrder = asyncHandler(async (req, res, next) => {
       subscriptionDate: orderData?.orderDate || "something went wrong",
     }
   );
-
-  //   res.redirect(`${process.env.BASE_URL}/auctionProperties`);
-  res.status(200);
+  // return res.redirect(`${process.env.BASE_URL}/auctionProperties`);
+  res.status(200).json({ status: true, message: "Updated Successfully " });
 });
