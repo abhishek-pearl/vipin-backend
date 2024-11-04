@@ -14,7 +14,7 @@ export const bookingOrder = asyncHandler(async (req, res, next) => {
   if (!validUser) {
     return res
       .status(401)
-      .json({ status: true, message: "Bad Request User Does Not Exists !!" });
+      .json({ status: false, message: "Bad Request User Does Not Exists !!" });
   }
 
   const newBookingOrder = await registrationOrderModel.create({
