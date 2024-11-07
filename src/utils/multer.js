@@ -1,7 +1,6 @@
 import multer from "multer";
 import dotenv from "dotenv";
 dotenv.config();
-// console.log("avnih")
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "uploads");

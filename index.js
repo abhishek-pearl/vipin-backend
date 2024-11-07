@@ -11,6 +11,8 @@ import cookieParser from "cookie-parser";
 import userAuthRouter from "./src/routes/userAuth.js";
 import newsRouter from "./src/routes/news.js";
 import { orderRouter } from "./src/routes/order.js";
+import { serviceRoutes } from "./src/routes/services.js";
+import morgan from "morgan";
 
 dotenv.config();
 const app = express();
@@ -36,6 +38,7 @@ app.use(
   })
 );
 
+app.use(morgan('dev'));
 app.get("/", (req, res) => {
   res.send("It Works");
 });
@@ -46,6 +49,7 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", userAuthRouter);
 app.use("/api/v1/news", newsRouter);
 app.use("/api/v1/order", orderRouter);
+app.use("/api/v1/services", serviceRoutes);
 
 app.use(error);
 app.listen(PORT, () => {
