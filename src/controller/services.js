@@ -69,36 +69,31 @@ export const createService = asyncHandler(async (req, res, next) => {
 
   // Update features with uploaded images
 
-  // for (let i = 0; i < (topSection?.features?.length || 0); i++) {
-  //   const currImgUrl = req.files?.topSectionFeaturesImages[i];
-  //   const payload = {
-  //     icon: currImgUrl?.secure_url || "Image URL error",
-  //     description: topSection.features[i],
-  //     ...topSection?.features[i],
-  //   };
-  //   topSectionFeaturesImages.features[i] = payload;
+  // for(let i = 0 ; i < (topSection?.features?.length||0) ;i++)
+  // {
+  //     const currImgUrl = req.files.topSectionFeaturesImages[i];
+  //     const payload = {
+  //         icon:currImgUrl?.secure_url ||"Image URL error",
+  //         description:bottomSection.features[i]
+  //     }
+  //     topSectionFeaturesImages.features[i] = payload;
   // }
 
   for (let i = 0; i < (bottomSection?.features?.length || 0); i++) {
-    const currImgUrl = req.files?.bottomSectionFeaturesImages[i];
+    const currImgUrl = req.files.bottomSectionFeaturesImages[i];
     const payload = {
-      icon: currImgUrl.secure_url || "Image URL error",
+      icon: currImgUrl?.secure_url || "Image URL error",
       description: bottomSection.features[i].heading,
-      ...bottomSection?.features[i],
+      ...bottomSection.features[i],
     };
     bottomSection.features[i] = payload;
   }
 
   serviceIcon = req.files.serviceIcon[0]?.secure_url || "Image URL error";
-
   topSection.banner =
-    req.files?.topSectionImage[0]?.secure_url || "Image URL error";
-
-  // midSection.banner =
-  // req.files?.midSectionImage[0]?.secure_url || "Image URL error";
-
+    req.files.topSectionImage[0]?.secure_url || "Image URL error";
   midSection.stepsToAvailLoan.banner =
-    req.files?.stepsToAvailLoanImage[0]?.secure_url || "Image URL error";
+    req.files.stepsToAvailLoanImage[0]?.secure_url || "Image URL error";
 
   const newService = new serviceModel({
     serviceTitle,
