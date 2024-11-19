@@ -1,15 +1,32 @@
 import { prospectsModel } from "../model/prospects.js";
+import { uploadFile } from "../utils/cloudinary.js";
 import { asyncHandler } from "../utils/errorHandler/asyncHandler.js";
 import { sendContactMail, sendEnquiryMail } from "../utils/nodeMailer.js";
 
 export const submitEnquiry = asyncHandler(async (req, res) => {
   const { name, email, mobile, typeOfLoan, loanRequired, pincode } = req.body;
+  const document = req.file;
+  console.log("----", document);
+  let documentUrl = null;
+  if (document) {
+    const uploadResponse = await uploadFile([document]);
+    console.log("----", res);
+    documentUrl = uploadResponse.result[0]?.secure_url;
+  }
   if (!name || !email || !mobile || !typeOfLoan || !loanRequired || !pincode) {
     res
       .status(500)
       .json({ status: false, message: "Incomplete form parameters" });
   } else {
-    const data = { name, email, mobile, typeOfLoan, loanRequired, pincode };
+    const data = {
+      name,
+      email,
+      mobile,
+      typeOfLoan,
+      loanRequired,
+      pincode,
+      document: documentUrl,
+    };
     await prospectsModel.create(data);
     await sendEnquiryMail(data);
     res

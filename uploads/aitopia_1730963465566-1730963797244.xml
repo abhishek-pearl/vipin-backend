@@ -1,0 +1,14 @@
+<svg width="100" height="100" viewBox="-50 -50 100 100" xmlns="http://www.w3.org/200/svg">
+   <style>
+      .rect { fill: #000; }
+      .circle-white { fill: #fff; }
+      .circle-black { fill: #000; }
+   </style>
+   <g transform="rotate(-45)">
+      <rect class="rect" x="-25" y="-10" width="50" height="20" />
+      <circle class="circle-white" cx="-15" cy="" r="7.5" />
+      <circle class="circle-white" cx="15" cy="" r="7.5" />
+      <circle class="circle-black" cx="-15.5" cy="1.75" r="3.75" />
+      <circle class="circle-black" cx="16" cy="2" r="3" />
+   </g>
+</svg>

@@ -12,13 +12,20 @@ cloudinary.config({
 
 export const uploadFile = async (files) => {
   try {
-    let resultArr = await Promise.all(
+    // Ensure files is an array and each file has a path
+    if (!Array.isArray(files) || files.some(file => !file.path)) {
+      throw new Error("Invalid file data provided.");
+    }
+
+    const resultArr = await Promise.all(
       files.map(async (file) => {
         try {
           const res = await cloudinary.uploader.upload(file.path, {
             folder: "vipin",
           });
-          // Deleting the file after successful upload
+          console.log("Upload successful:", res);
+
+          // Delete file after successful upload
           fs.unlink(file.path, (err) => {
             if (err) {
               console.error("Error deleting file from disk:", err);
@@ -26,16 +33,19 @@ export const uploadFile = async (files) => {
               console.log("File deleted from disk:", file.path);
             }
           });
+
           return res;
         } catch (uploadError) {
           console.error("Error uploading file:", uploadError);
-          return null; // or handle error as per your requirement
+          return null;
         }
       })
     );
 
+    // Filter out any null values from failed uploads
     return { status: true, result: resultArr.filter(Boolean) };
   } catch (error) {
-    return { status: false, message: error?.message };
+    console.error("Error in uploadFile function:", error);
+    return { status: false, message: error.message };
   }
 };
