@@ -1,3 +1,4 @@
+import chalk from "chalk";
 import { propertyModel } from "../model/property.js";
 import { uploadFile } from "../utils/cloudinary.js";
 import { asyncHandler } from "../utils/errorHandler/asyncHandler.js";
@@ -61,9 +62,16 @@ export const getProperties = asyncHandler(async (req, res) => {
   }
 
   if (auctionStart || auctionEnd) {
-    pipeline.auctionStartDate = {};
-    if (auctionStart) pipeline.auctionStartDate.$gte = new Date(auctionStart);
-    if (auctionEnd) pipeline.auctionStartDate.$lte = new Date(auctionEnd);
+    let auctionStartDate = {};
+    let auctionEndDate = {};
+    if (auctionStart) {
+      auctionStartDate.$gte = new Date(auctionStart).toLocaleTimeString();
+      pipeline.auctionStartDate = auctionStartDate;
+    }
+    if (auctionEnd) {
+      auctionEndDate.$lte = new Date(auctionEnd).toLocaleTimeString();
+      pipeline.auctionEndDate = auctionEndDate;
+    }
   }
 
   if (minPrice || maxPrice) {
@@ -77,9 +85,13 @@ export const getProperties = asyncHandler(async (req, res) => {
 
   if (req?.isAuth) {
     console.log("calling with auth");
+    console.log(chalk.yellow(JSON.stringify(pipeline)));
+
     var result = await propertyModel.find(pipeline).skip(skip).limit(limit);
   } else {
     console.log("calling without auth");
+
+    console.log(chalk.yellow(JSON.stringify(pipeline)));
 
     var result = await propertyModel
       .find(pipeline)
