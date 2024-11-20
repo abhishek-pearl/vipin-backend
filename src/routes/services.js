@@ -1,6 +1,6 @@
 import express from "express";
 import { upload } from "../utils/multer.js";
-import { createService, getAllServices } from "../controller/services.js";
+import { createService, deleteService, getAllServices } from "../controller/services.js";
 
 const router = express.Router();
 
@@ -15,7 +15,9 @@ router.route('/')
     { name: "bottomSectionFeaturesImages",maxCount: 4 } // Array of images
 ]),createService)
 .get(getAllServices);
-;
+
+router.route('/:id')
+.delete(deleteService);
 
 
 export const serviceRoutes = router;
