@@ -58,18 +58,18 @@ export const getProperties = asyncHandler(async (req, res) => {
     addFilter(pipeline, "city", city);
   }
   if (bankName) {
-    addFilter(pipeline, "bankName", bankName);
+    addFilter(pipeline, "bankName", { $regex: bankName, $options: "i" });
   }
 
   if (auctionStart || auctionEnd) {
     let auctionStartDate = {};
     let auctionEndDate = {};
     if (auctionStart) {
-      auctionStartDate.$gte = new Date(auctionStart).toLocaleTimeString();
+      auctionStartDate.$gte = new Date(auctionStart);
       pipeline.auctionStartDate = auctionStartDate;
     }
     if (auctionEnd) {
-      auctionEndDate.$lte = new Date(auctionEnd).toLocaleTimeString();
+      auctionEndDate.$lte = new Date(auctionEnd);
       pipeline.auctionEndDate = auctionEndDate;
     }
   }

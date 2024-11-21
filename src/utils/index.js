@@ -13,7 +13,7 @@ const httpOnlyCookieValidity = () => {
 export const saveAccessTokenToCookie = (res, token) => {
   return res.cookie("VIPINBHAIIKA_ACCESS_TOKEN", token, {
     httpOnly: true,
-    expires: httpOnlyCookieValidity(),
+    // expires: 31536000000,
     sameSite: process.env.NODE_ENV === "production" ? "none" : "Lax",
     ...(process.env.NODE_ENV === "production" && { secure: true }),
   });
