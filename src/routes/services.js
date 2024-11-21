@@ -2,6 +2,7 @@ import express from "express";
 import { upload } from "../utils/multer.js";
 import {
   createService,
+  deleteService,
   getAllServices,
   getServiceById,
 } from "../controller/services.js";
@@ -22,7 +23,6 @@ router
     createService
   )
   .get(getAllServices);
-
-router.route("/:id").get(getServiceById);
+router.route("/:id").get(getServiceById).delete(deleteService);
 
 export const serviceRoutes = router;
