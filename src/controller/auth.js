@@ -3,7 +3,7 @@ import { asyncHandler } from "../utils/errorHandler/asyncHandler.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { saveAccessTokenToCookie } from "../utils/index.js";
-import { accessTokenValidity, refreshTokenValidity } from "../utils/index.js";
+// import { accessTokenValidity, refreshTokenValidity } from "../utils/index.js";
 import { authModel } from "../model/auth.js";
 
 // -------------------------------------------------------------------------------------------
@@ -43,7 +43,7 @@ export const login = asyncHandler(async (req, res) => {
       isAuth: true,
     },
     process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: 253402300799 }
+    { expiresIn: "360d" }
   );
 
   // Saving accessToken to the httpOnly Cookie
