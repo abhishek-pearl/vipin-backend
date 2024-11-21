@@ -40,6 +40,12 @@ export const getProperties = asyncHandler(async (req, res) => {
     maxPrice,
   } = req.query;
 
+  if (Object.keys(req.query).length <= 1) {
+    return res
+      .status(200)
+      .json({ status: false, message: "Data Fetched Successfully", data: [] });
+  }
+
   const limit = req?.query?.limit || 25;
   const page = req?.query?.page || 1;
   const skip = (page - 1) * limit;
@@ -64,15 +70,23 @@ export const getProperties = asyncHandler(async (req, res) => {
   if (auctionStart || auctionEnd) {
     let auctionStartDate = {};
     let auctionEndDate = {};
-    if (auctionStart) {
-      auctionStartDate.$gte = new Date(auctionStart);
-      pipeline.auctionStartDate = auctionStartDate;
-    }
-    if (auctionEnd) {
-      auctionEndDate.$lte = new Date(auctionEnd);
+
+    if (auctionStart && !auctionEnd) {
+      auctionEndDate.$gte = new Date(auctionStart);
       pipeline.auctionEndDate = auctionEndDate;
+    } else {
+      if (auctionStart) {
+        auctionStartDate.$gte = new Date(auctionStart);
+        pipeline.auctionStartDate = auctionStartDate;
+      }
+      if (auctionEnd) {
+        auctionEndDate.$lte = new Date(auctionEnd);
+        pipeline.auctionEndDate = auctionEndDate;
+      }
     }
   }
+
+  console.log(pipeline);
 
   if (minPrice || maxPrice) {
     pipeline.reservePrice = {};

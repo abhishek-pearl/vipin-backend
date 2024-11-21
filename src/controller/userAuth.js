@@ -4,7 +4,7 @@ import { asyncHandler } from "../utils/errorHandler/asyncHandler.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { saveAccessTokenToCookie } from "../utils/index.js";
-import { accessTokenValidity, refreshTokenValidity } from "../utils/index.js";
+// import { accessTokenValidity, refreshTokenValidity } from "../utils/index.js";
 import { userAuthModel } from "../model/userAuth.js";
 import errorResponse from "../utils/errorHandler/errorResponse.js";
 
@@ -15,16 +15,15 @@ import errorResponse from "../utils/errorHandler/errorResponse.js";
 export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-
   if (!email && !password) {
     return res
       .status(400)
       .json({ success: false, message: "All fields are required" });
   }
 
-  const user = await userAuthModel.findOne({ email }).select('+password');
-  
-  console.log("user",user);
+  const user = await userAuthModel.findOne({ email }).select("+password");
+
+  console.log("user", user);
 
   if (!user) {
     return res
@@ -45,10 +44,10 @@ export const login = asyncHandler(async (req, res) => {
   const accessToken = jwt.sign(
     {
       id: user._id,
-      isAuth:true
+      isAuth: true,
     },
     process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: accessTokenValidity }
+    { expiresIn: "360d" }
   );
 
   // Saving accessToken to the httpOnly Cookie
@@ -162,9 +161,10 @@ export const refreshToken = asyncHandler(async (req, res) => {
 // @route - POST /auth/signup
 
 export const signup = asyncHandler(async (req, res) => {
-
-   const {password} = req.body
- const isUserExists = await userAuthModel.findOne({fullname:req.body.fullName} );
+  const { password } = req.body;
+  const isUserExists = await userAuthModel.findOne({
+    fullname: req.body.fullName,
+  });
   if (isUserExists)
     res.status(404).json({ status: false, message: "User already Exists" });
 
@@ -172,7 +172,7 @@ export const signup = asyncHandler(async (req, res) => {
 
   const savedUser = await userAuthModel.create({
     ...req?.body,
-    password:hashPassword
+    password: hashPassword,
   });
 
   res.status(200).json({
@@ -193,16 +193,14 @@ export const logout = asyncHandler(async (req, res) => {
   });
 });
 
-
 //@desc when user completes its payment.
-export const getUserData = asyncHandler(async (req,res,next)=>{
-      
-  const user = await userAuthModel.findOne({_id:req.userData.id});
+export const getUserData = asyncHandler(async (req, res, next) => {
+  const user = await userAuthModel.findOne({ _id: req.userData.id });
 
-  if(!user)
-  {
-    next(new errorResponse("User Details Not Found ",404));
+  if (!user) {
+    next(new errorResponse("User Details Not Found ", 404));
   }
-  res.status(200).json({status:true,message:"User Data Fetched Successfully !!",user})
-})
-
+  res
+    .status(200)
+    .json({ status: true, message: "User Data Fetched Successfully !!", user });
+});
