@@ -189,14 +189,18 @@ export const checkStatus = async (req, res) => {
     }
 
 
-    if (response.data.success && updatedPayment) {
+    if ((response.data.success) && updatedPayment) {
 
       updatedPayment.transactionStatus = "SUCCESS";
       updatedPayment.orderId = response.data.data.transactionId;
 
       await updatedPayment.save();
+      console.log(chalk.bgMagenta("hi im success"))
+
       return res.status(200).redirect(redirectionUrlFrontendSUCCESS);
     } else {
+
+      console.log(chalk.bgYellow("hi im failed",redirectionUrlFrontendFAIL))
       updatedPayment.transactionStatus = "FAILED";
       updatedPayment.orderId = response.data.data.transactionId;
       await updatedPayment.save();
