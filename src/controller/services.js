@@ -4,14 +4,21 @@ import { uploadFile } from "../utils/cloudinary.js";
 import { asyncHandler } from "../utils/errorHandler/asyncHandler.js";
 import errorResponse from "../utils/errorHandler/errorResponse.js";
 
+function updateQuery(queryData) {
+  let { serviceTitle, description, topSection, midSection, bottomSection } =
+    queryData;
+  return {
+    serviceTitle,
+    description,
+  };
+}
+
 // Create Service
 export const createService = asyncHandler(async (req, res, next) => {
   let { serviceTitle, description, topSection, midSection, bottomSection } =
     req.body;
 
-  midSection = JSON.parse(midSection || "{}");
-  topSection = JSON.parse(topSection || "{}");
-  bottomSection = JSON.parse(bottomSection || "{}");
+
 
   if (!(midSection && topSection && bottomSection)) {
     return next(
@@ -21,6 +28,9 @@ export const createService = asyncHandler(async (req, res, next) => {
       )
     );
   }
+  midSection = JSON.parse(midSection || "{}");
+  topSection = JSON.parse(topSection || "{}");
+  bottomSection = JSON.parse(bottomSection || "{}");
 
   let {
     serviceIcon,
@@ -67,38 +77,21 @@ export const createService = asyncHandler(async (req, res, next) => {
     );
   }
 
-  // Update features with uploaded images
-
-  // for (let i = 0; i < (topSection?.features?.length || 0); i++) {
-  //   const currImgUrl = req.files?.topSectionFeaturesImages[i];
-  //   const payload = {
-  //     icon: currImgUrl?.secure_url || "Image URL error",
-  //     description: topSection.features[i],
-  //     ...topSection?.features[i],
-  //   };
-  //   topSectionFeaturesImages.features[i] = payload;
-  // }
-
   for (let i = 0; i < (bottomSection?.features?.length || 0); i++) {
-    const currImgUrl = req.files?.bottomSectionFeaturesImages[i];
+    const currImgUrl = req.files.bottomSectionFeaturesImages[i];
     const payload = {
-      icon: currImgUrl.secure_url || "Image URL error",
+      icon: currImgUrl || {secure_url:"Image URL error"},
       description: bottomSection.features[i].heading,
-      ...bottomSection?.features[i],
+      ...bottomSection.features[i],
     };
     bottomSection.features[i] = payload;
   }
 
   serviceIcon = req.files.serviceIcon[0]?.secure_url || "Image URL error";
-
   topSection.banner =
-    req.files?.topSectionImage[0]?.secure_url || "Image URL error";
-
-  // midSection.banner =
-  // req.files?.midSectionImage[0]?.secure_url || "Image URL error";
-
+    req.files.topSectionImage[0]?.secure_url || "Image URL error";
   midSection.stepsToAvailLoan.banner =
-    req.files?.stepsToAvailLoanImage[0]?.secure_url || "Image URL error";
+    req.files.stepsToAvailLoanImage[0]?.secure_url || "Image URL error";
 
   const newService = new serviceModel({
     serviceTitle,
@@ -134,11 +127,88 @@ export const getServiceById = asyncHandler(async (req, res) => {
 
 // Update Service by ID
 export const updateService = asyncHandler(async (req, res, next) => {
-  const updatedService = await Service.findByIdAndUpdate(
-    req.params.id,
-    req.body,
-    { new: true, runValidators: true }
+  let query = {};
+  const { midSection, topSection, bottomSection,...rest } = req.body;
+  let {
+    serviceIcon,
+    topSectionImage,
+    midSectionImage,
+    stepsToAvailLoanImage,
+    topSectionFeaturesImages,
+    bottomSectionFeaturesImages,
+  } = req.files;
+  
+
+  query = updateQuery(rest);
+
+  const fileKeys = Object.keys(req.files || {});
+
+  const updatedFiles = {};
+  // 
+  
+  if(midSection)
+    query.midSection = JSON.parse(midSection || "{}");
+  
+  if(topSection)
+    query.topSection = JSON.parse(topSection || "{}");
+  
+  if(bottomSection)
+   query.bottomSection = JSON.parse(bottomSection || "{}");
+
+  await Promise.all(
+    fileKeys.map(async (currKey) => {
+      const uploadedFiles = await uploadFile(req.files[currKey]);
+      updatedFiles[currKey] = uploadedFiles.result || [];
+    })
   );
+
+  // Update `req.files` once all uploads are complete
+  req.files = { ...updatedFiles };
+  // console.log(serviceIcon[0].url, "updatedFiles");
+
+
+  
+
+
+  if(query?.bottomSection && query?.bottomSection?.features?.length === (req.files?.bottomSectionFeaturesImages)?.length ){
+    for (let i = 0; i < (bottomSection?.features?.length || 0); i++) {
+      const currImgUrl = req.files?.bottomSectionFeaturesImages[i];
+      const payload = {
+        icon: currImgUrl || {secure_url:"Image URL error"},
+        description: bottomSection.features[i].heading,
+        ...bottomSection?.features[i],
+      };
+      bottomSection.features[i] = payload;
+    } 
+  }
+  else{
+    return next(new errorResponse("Something is missing from Bottom Section Or Images is not equivalent to features !!"));
+  }
+
+ 
+
+   
+  if(req.files?.serviceIcon && req.files?.serviceIcon.length > 0 )
+     query.serviceIcon = req.files.serviceIcon[0]?.secure_url || "Image URL error";
+  
+  
+  if(req.files?.topSectionImage && req.files?.topSectionImage.length > 0)
+    query.topSection.banner =
+    req.files?.topSectionImage[0]?.secure_url || "Image URL error";
+
+  // midSection.banner =
+  // req.files?.midSectionImage[0]?.secure_url || "Image URL error";
+  if(query?.midSection && req.files?.stepsToAvailLoanImage && req.files?.stepsToAvailLoanImage.length > 0 )
+    query.midSection.stepsToAvailLoan.banner =
+    req.files?.stepsToAvailLoanImage[0]?.secure_url || "Image URL error";
+
+
+
+  const updatedService = await Service.findByIdAndUpdate(req.params.id, query, {
+    new: true,
+    runValidators: true,
+  });
+
   if (!updatedService) {
     return res.status(404).json({ message: "Service not found" });
   }

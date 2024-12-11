@@ -12,7 +12,6 @@ export const error = (err, req, res, next) => {
 
   // Duplicate key error
   if (err.code === 11000) {
- 
     const message = `Duplicate key ${Object.keys(err.keyValue)} Entered`;
     err = new errorResponse(message, 400);
   }

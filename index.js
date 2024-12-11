@@ -13,6 +13,7 @@ import newsRouter from "./src/routes/news.js";
 import { orderRouter } from "./src/routes/order.js";
 import { serviceRoutes } from "./src/routes/services.js";
 import morgan from "morgan";
+import { paymentRouter } from "./src/routes/payment.js";
 
 dotenv.config();
 const app = express();
@@ -29,7 +30,7 @@ app.use(
       "http://localhost:3002",
       "http://localhost:5173",
       "https://vipin-mern.vercel.app",
-      "https://vipin-admin.vercel.app"
+      "https://vipin-admin.vercel.app",
     ],
     credentials: true,
     methods: ["GET", "PUT", "POST", "PATCH", "DELETE"],
@@ -38,7 +39,7 @@ app.use(
   })
 );
 
-app.use(morgan('dev'));
+app.use(morgan("dev"));
 app.get("/", (req, res) => {
   res.send("It Works");
 });
@@ -50,7 +51,7 @@ app.use("/api/v1/user", userAuthRouter);
 app.use("/api/v1/news", newsRouter);
 app.use("/api/v1/order", orderRouter);
 app.use("/api/v1/services", serviceRoutes);
-
+app.use("/api/v1/payment",paymentRouter);
 app.use(error);
 app.listen(PORT, () => {
   console.log(chalk.bgBlue(`Server Listening to PORT ${PORT}`));
