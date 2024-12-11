@@ -164,7 +164,7 @@ export const refreshToken = asyncHandler(async (req, res) => {
 export const signup = asyncHandler(async (req, res) => {
 
    const {password} = req.body
- const isUserExists = await userAuthModel.findOne({fullname:req.body.fullName} );
+ const isUserExists = await userAuthModel.findOne({email:req.body.email} );
   if (isUserExists)
     res.status(404).json({ status: false, message: "User already Exists" });
 

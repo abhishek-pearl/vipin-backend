@@ -18,7 +18,8 @@ export const orderPayment = async (req,res)=>{
       auctionType,
       budget,
       amount,
-      number
+      number,
+      userType
     } = req?.body;
      
     console.log(chalk.green(JSON.stringify(req.body)));
@@ -51,6 +52,7 @@ export const orderPayment = async (req,res)=>{
       name,
       state,
       city,
+      userType,
       locality,
       auctionType,
       budget,
