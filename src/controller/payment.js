@@ -20,10 +20,33 @@ export const orderPayment = async (req,res)=>{
       amount,
       number
     } = req?.body;
-
+     
+    console.log(chalk.green(JSON.stringify(req.body)));
    
-    console.log("sdsadsa",req.body);
+    let key = '';
+    let merchantId = '';
+    let redirectionUrl = '';
+    let callbackUrl = '';
+    let URL = '';
+    if(process.env.WORKING_ENV == "development")
+      {
+          key = process.env.PHONEPAY_SALT_TESTING;
+          merchantId =  process.env.PHONEPAY_MERCHANT_TESTING;
+          redirectionUrl = process.env.redirectUrlPhonePayTesting;
+          callbackUrl = process.env.callbackUrlPhonePayTesting;
+          URL = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay";
 
+      }
+      else
+      {
+        key = process.env.PHONEPAY_SALT_PRODUCTION ;
+        merchantId =  process.env.PHONEPAY_MERCHANT_PRODUCTION;
+        redirectionUrl = process.env.redirectUrlPhonePayProduction;
+        callbackUrl = process.env.callbackUrlPhonePayProduction;
+        URL = "https://api.phonepe.com/apis/hermes/pg/v1/pay";
+
+
+      }
     const createOrder = new PaymentModel({
       name,
       state,
@@ -39,14 +62,15 @@ export const orderPayment = async (req,res)=>{
     
     const data = {
         // merchantId: "M22K8UH34V1RW",
-        merchantId: "PGTESTPAYUAT86",
+        // merchantId: "PGTESTPAYUAT86",
+        merchantId,
         merchantTransactionId:createOrder?._id||"SOMETHING IS WRONG",
         merchantUserId:'MUID'+req.userid,
         amount: 100*(createOrder.amount||1500),
         name:name,  
-        redirectUrl: `http://localhost:8000/api/v1/payment/status/${createOrder?._id}`,
-        redirectMode: "GET",
-        callbackUrl: `https://localhost:3001/api/v1/payment/status/${createOrder?._id}`,
+        redirectUrl: `${redirectionUrl}/${createOrder?._id}`,
+        redirectMode: "POST",
+        callbackUrl: `${callbackUrl}/${createOrder?._id}`,
         mobileNumber: number,
         paymentInstrument: {
           type: "PAY_PAGE"
@@ -56,14 +80,14 @@ export const orderPayment = async (req,res)=>{
       const  payload = JSON.stringify(data);
       const payloadMain = Buffer.from(payload).toString('base64');
       // const key = "e9a87a23-76de-4156-968f-efd0018afdb8";
-      const key = "96434309-7796-489d-8924-ab56988a6076";
+      // const key = "96434309-7796-489d-8924-ab56988a6076";
       const keyIndex = 1;
       const string = payloadMain + '/pg/v1/pay' + key;
       const sha256 = crypto.createHash('sha256').update(string).digest('hex');
       const checkSum = sha256 + '###' + keyIndex;
 
       // const URL = "https://api.phonepe.com/apis/hermes/pg/v1/pay";
-      const URL = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay";
+      // const URL = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay";
 
       const options = {
         method:'POST',
@@ -91,48 +115,47 @@ export const orderPayment = async (req,res)=>{
     }
 }
 
-export const paymentStatus = (req,res)=>{
-    // const {transactionId} = req.params;
-    const merchantTransactionId = res.req.body.transactionId;
-    const merchantId = res.req.body.merchantId;
-    const keyIndex = 1;
-    // const key = "e9a87a23-76de-4156-968f-efd0018afdb8";
-    const key = "96434309-7796-489d-8924-ab56988a6076";
-    const string = `/pg/v1/status/${merchantId}/${merchantTransactionId}`+key;
-    const sha256 = crypto.createHash('sha256').update(string).digest('hex');
-    const checkSum = sha256 +'###' + keyIndex;
-    // const URL = `https://api.phonepe.com/apis/hermes/pg/v1/status/${merchantId}/${merchantTransactionId}`;
-    const URL = ` https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/status/${merchantId}/${merchantTransactionId}`;
 
-    const options = {
-        method:'GET',
-        url:URL,
-        headers:{
-            accept:'application/json',
-            'Content-Type':'application/json',
-            'X-VERIFY':checkSum,
-            'X-MERCHANT-ID':merchantId
-        }
-
-    }
-
-    axios
-    .request(options)
-    .then(async(res)=>{
-        console.log(res);
-
-    })
-    .catch((error)=>{
-        console.log(err);
-    })
-
-}
 
 export const checkStatus = async (req, res) => {
   try {
+    let key = '';
+    let merchantId = '';
+    let redirectionUrl = '';
+    let callbackUrl = '';
+    let URL = '';
+    let redirectionUrlFrontendSUCCESS = '';
+    let redirectionUrlFrontendFAIL ='';
+
+    console.log(chalk.redBright("HEre we go "))
+    if(process.env.WORKING_ENV == "development")
+      {
+          key = process.env.PHONEPAY_SALT_TESTING;
+          merchantId =  process.env.PHONEPAY_MERCHANT_TESTING;
+          redirectionUrl = process.env.redirectUrlPhonePayTesting;
+          callbackUrl = process.env.callbackUrlPhonePayTesting;
+          URL = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/status";
+          redirectionUrlFrontendSUCCESS = process.env.REDIRECTION_SUCCESS_URL_FRONTEND_TESTING;
+          redirectionUrlFrontendFAIL = process.env.REDIRECTION_FAIL_URL_FRONTEND_TESTING;
+
+      }
+      else
+      {
+        key = process.env.PHONEPAY_SALT_PRODUCTION ;
+        merchantId =  process.env.PHONEPAY_MERCHANT_PRODUCTION;
+        redirectionUrl = process.env.redirectUrlPhonePayProduction;
+        callbackUrl = process.env.callbackUrlPhonePayProduction;
+        URL = "https://api.phonepe.com/apis/hermes/pg/v1/status";
+        redirectionUrlFrontendSUCCESS = process.env.REDIRECTION_SUCCESS_URL_FRONTEND_PRODUCTION;
+        redirectionUrlFrontendFAIL = process.env.REDIRECTION_FAIL_URL_FRONTEND_PRODUCTION;
+
+
+
+      }
+
     const merchantTransactionId = req.params['txnId'];
-    const merchantId = "PGTESTPAYUAT86"; // Use environment variables in production
-    const saltKey = "96434309-7796-489d-8924-ab56988a6076";
+
+    const saltKey = key;
     const keyIndex = 1;
 
     // Generate the checksum
@@ -143,7 +166,7 @@ export const checkStatus = async (req, res) => {
     // Set up the API request options
     const options = {
       method: 'GET',
-      url: `https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/status/${merchantId}/${merchantTransactionId}`,
+      url: `${URL}/${merchantId}/${merchantTransactionId}`,
       headers: {
         accept: 'application/json',
         'Content-Type': 'application/json',
@@ -155,26 +178,30 @@ export const checkStatus = async (req, res) => {
     // Make the API request
     const response = await axios.request(options);
 
-    // Handle the response
-    if (response.data.success) {
-      console.log("API Response:", response.data);
-      console.log("API Response:", chalk.yellow(response.data.data.merchantTransactionId ));
-     
-      const updatedPayment = await PaymentModel.findByIdAndUpdate(
-        { _id:response.data.data.merchantTransactionId },
-        { transactionStatus: "SUCCESS",orderId:response.data.data.transactionId },
-        { new: true } // Return the updated document
-      );
+    const updatedPayment = await PaymentModel.findById({ _id:response.data.data.merchantTransactionId });
+    
+ 
 
-      if (!updatedPayment) {
-        return res.status(404).json({ success: false, message: "Payment record not found" });
-      }
-
-      console.log("Updated Payment Record:", updatedPayment);
-      return res.status(200).redirect("http://localhost:3002/transaction/success");
-    } else {
-      return res.status(400).redirect("http://localhost:3002/transaction/failed");
+    if (!updatedPayment) {
+      return res.status(404).json({ success: false, message: "Payment record not found" });
     }
+
+
+    if (response.data.success && updatedPayment) {
+
+      updatedPayment.transactionStatus = "SUCCESS";
+      updatedPayment.orderId = response.data.data.transactionId;
+
+      await updatedPayment.save();
+      return res.status(200).redirect(redirectionUrlFrontendSUCCESS);
+    } else {
+      updatedPayment.transactionStatus = "FAILED";
+      updatedPayment.orderId = response.data.data.transactionId;
+      await updatedPayment.save();
+
+      return res.status(400).redirect(redirectionUrlFrontendFAIL);
+    }
+
   } catch (err) {
     console.error("Error in checkStatus:", err);
     return res.status(500).json({ success: false, message: err.message });

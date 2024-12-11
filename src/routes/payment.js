@@ -1,5 +1,5 @@
 import express from "express";
-import { checkStatus, orderPayment, paymentStatus } from "../controller/payment.js";
+import { checkStatus, orderPayment} from "../controller/payment.js";
 import { verifyTokenMiddleware } from "../middleware/verifyTokenMiddleware.js";
 
 const router = express.Router();
