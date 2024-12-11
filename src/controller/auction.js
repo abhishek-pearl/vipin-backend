@@ -40,11 +40,11 @@ export const getProperties = asyncHandler(async (req, res) => {
     maxPrice,
   } = req.query;
 
-  if (Object.keys(req.query).length <= 1) {
-    return res
-      .status(200)
-      .json({ status: false, message: "Data Fetched Successfully", data: [] });
-  }
+  // if (Object.keys(req.query).length <= 1) {
+  //   return res
+  //     .status(200)
+  //     .json({ status: false, message: "Data Fetched Successfully", data: [] });
+  // }
 
   const limit = req?.query?.limit || 25;
   const page = req?.query?.page || 1;
@@ -86,7 +86,7 @@ export const getProperties = asyncHandler(async (req, res) => {
     }
   }
 
-  console.log(pipeline);
+  console.log(chalk.green(JSON.stringify(pipeline)));
 
   if (minPrice || maxPrice) {
     pipeline.reservePrice = {};
