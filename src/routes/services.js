@@ -1,6 +1,6 @@
 import express from "express";
 import { upload } from "../utils/multer.js";
-import { createService, deleteService, getAllServices, updateService } from "../controller/services.js";
+import { createService, deleteService, getAllServices, getServiceById, updateService } from "../controller/services.js";
 
 const router = express.Router();
 
@@ -32,6 +32,7 @@ router.route('/')
 
 router.route('/:id')
 .delete(deleteService)
+.get(getServiceById)
 .patch(upload.fields([
     { name: "serviceIcon", maxCount: 1 },
     { name: "topSectionImage", maxCount: 1 },

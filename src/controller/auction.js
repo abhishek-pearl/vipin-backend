@@ -1,3 +1,4 @@
+import chalk from "chalk";
 import { propertyModel } from "../model/property.js";
 import { uploadFile } from "../utils/cloudinary.js";
 import { asyncHandler } from "../utils/errorHandler/asyncHandler.js";
@@ -39,6 +40,12 @@ export const getProperties = asyncHandler(async (req, res) => {
     maxPrice,
   } = req.query;
 
+  if (Object.keys(req.query).length <= 1) {
+    return res
+      .status(200)
+      .json({ status: false, message: "Data Fetched Successfully", data: [] });
+  }
+
   const limit = req?.query?.limit || 25;
   const page = req?.query?.page || 1;
   const skip = (page - 1) * limit;
@@ -57,14 +64,29 @@ export const getProperties = asyncHandler(async (req, res) => {
     addFilter(pipeline, "city", city);
   }
   if (bankName) {
-    addFilter(pipeline, "bankName", bankName);
+    addFilter(pipeline, "bankName", { $regex: bankName, $options: "i" });
   }
 
   if (auctionStart || auctionEnd) {
-    pipeline.auctionStartDate = {};
-    if (auctionStart) pipeline.auctionStartDate.$gte = new Date(auctionStart);
-    if (auctionEnd) pipeline.auctionStartDate.$lte = new Date(auctionEnd);
+    let auctionStartDate = {};
+    let auctionEndDate = {};
+
+    if (auctionStart && !auctionEnd) {
+      auctionEndDate.$gte = new Date(auctionStart);
+      pipeline.auctionEndDate = auctionEndDate;
+    } else {
+      if (auctionStart) {
+        auctionStartDate.$gte = new Date(auctionStart);
+        pipeline.auctionStartDate = auctionStartDate;
+      }
+      if (auctionEnd) {
+        auctionEndDate.$lte = new Date(auctionEnd);
+        pipeline.auctionEndDate = auctionEndDate;
+      }
+    }
   }
+
+  console.log(pipeline);
 
   if (minPrice || maxPrice) {
     pipeline.reservePrice = {};
@@ -77,9 +99,13 @@ export const getProperties = asyncHandler(async (req, res) => {
 
   if (req?.isAuth) {
     console.log("calling with auth");
+    console.log(chalk.yellow(JSON.stringify(pipeline)));
+
     var result = await propertyModel.find(pipeline).skip(skip).limit(limit);
   } else {
     console.log("calling without auth");
+
+    console.log(chalk.yellow(JSON.stringify(pipeline)));
 
     var result = await propertyModel
       .find(pipeline)
