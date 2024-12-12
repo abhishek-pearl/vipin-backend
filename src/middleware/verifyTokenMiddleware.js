@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 export const verifyTokenMiddleware = async (req, res, next) => {
   try {
     const cookies = req?.cookies;
-    const access_token = cookies?.VIPINBHAIIKA_ACCESS_TOKEN;
+    const access_token = cookies?.DHANLAXMI_ACCESS_TOKEN;
 
   
 
