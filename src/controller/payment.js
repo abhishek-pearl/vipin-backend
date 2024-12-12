@@ -129,7 +129,6 @@ export const checkStatus = async (req, res) => {
     let redirectionUrlFrontendSUCCESS = '';
     let redirectionUrlFrontendFAIL ='';
 
-    console.log(chalk.redBright("HEre we go "))
     if(process.env.WORKING_ENV == "development")
       {
           key = process.env.PHONEPAY_SALT_TESTING;
@@ -189,7 +188,7 @@ export const checkStatus = async (req, res) => {
     }
 
 
-    if ((response.data.success) && updatedPayment) {
+    if ((response.data.success) &&(response.data.code != "PAYMENT_FAILED")&& updatedPayment) {
 
       updatedPayment.transactionStatus = "SUCCESS";
       updatedPayment.orderId = response.data.data.transactionId;
