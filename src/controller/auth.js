@@ -101,60 +101,6 @@ export const refreshToken = asyncHandler(async (req, res) => {
   });
 });
 
-// @desc - to update the users password
-// @route - PUT /auth/resetPassword
-// @access - PRIVATE
-// export const resetPassword = async (req, res) => {
-//   try {
-//     const { email, password, confirmPassword } = req.body;
-
-//     if (!email || !password || !confirmPassword) {
-//       return res.status(400).json({
-//         status: "FAILURE",
-//         status: "Email Id, Password and Confirm Password are required",
-//       });
-//     }
-
-//     const user = await authModel.findOne({ email });
-//     if (!user) {
-//       return res
-//         .status(400)
-//         .json({ success: false, message: "Email does not exists" });
-//     }
-
-//     if (password.length < 10 || confirmPassword.length < 10) {
-//       return res.status(400).json({
-//         success: false,
-//         message:
-//           "Password and Confirm Password must have length greater than or equal to 10",
-//       });
-//     }
-
-//     if (password !== confirmPassword) {
-//       return res
-//         .status(400)
-//         .json({ success: false, message: "Password does not match" });
-//     }
-
-//     const hashedPassword = await bcrypt.hash(password, 10);
-
-//     await authModel.findOneAndUpdate(
-//       { email },
-//       { password: hashedPassword },
-//       { $new: true }
-//     );
-
-//     return res
-//       .status(200)
-//       .json({ success: true, message: "Password Updated Successfully" });
-//   } catch (error) {
-//     return res.status(500).json({
-//       success: false,
-//       message: `Internal Server Error! ${error.message}`,
-//     });
-//   }
-// };
-
 // @desc -signup for client panel
 // @route - POST /auth/signup
 export const signup = asyncHandler(async (req, res) => {

@@ -17,7 +17,7 @@ const faqSchema = new mongoose.Schema({
 
 const featuresSchema = new mongoose.Schema({
     icon:{
-        type:String
+        type:{}
     },
     description:{
         type:String

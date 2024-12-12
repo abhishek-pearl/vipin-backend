@@ -40,6 +40,9 @@ const userAuthSchema = new mongoose.Schema({
   subscriptionDate:{
     type:String,
     default:""
+  },
+  refreshToken:{
+    type:String
   }
 
 },{timestamps:true});
