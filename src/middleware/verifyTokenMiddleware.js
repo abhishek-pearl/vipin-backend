@@ -46,7 +46,6 @@ export const verifyTokenMiddlewareAuction = async (req, res, next) => {
     const cookies = req?.cookies;
     const access_token = cookies?.DHANLAXMI_ACCESS_TOKEN;
 
-    console.log("cookies", cookies);
 
     if (!access_token) {
       console.log("no access token ==========");
