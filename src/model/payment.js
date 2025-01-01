@@ -6,6 +6,9 @@ const paymentSchema = new mongoose.Schema({
     orderId:{
         type:String
     },
+    email:{
+     type:String
+    },
     transactionStatus:{
         type:String,
         enum:['SUCCESS','PENDING','FAILED'],

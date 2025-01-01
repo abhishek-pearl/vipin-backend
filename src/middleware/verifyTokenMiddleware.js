@@ -1,5 +1,7 @@
 //==============================================Imports===============================================
 import jwt from "jsonwebtoken";
+import { userAuthModel } from "../model/userAuth.js";
+import chalk from "chalk";
 //***************************************************************************************************
 
 export const verifyTokenMiddleware = async (req, res, next) => {
@@ -19,16 +21,19 @@ export const verifyTokenMiddleware = async (req, res, next) => {
       access_token,
       process.env.ACCESS_TOKEN_SECRET,
       async (error, user) => {
-        console.log("currentUser", user);
+        const userData = await userAuthModel.findOne({_id:user.id}).lean();
+        console.log(chalk.bgWhiteBright("User Data from middleware ",JSON.stringify(userData)));
+
         if (error) {
           return res.status(403).json({
             success: false,
-            message: "Unauthorized token! Please Check Your Login Credentials",
+            message: "Unauthorized token! Please Check Your Login Credentials Or Refresh The Page",
           });
         }
         req.isAuth = true;
-        req.userData = user;
-        req.userId = user.id;
+        req.userData = userData;
+        req.userId = user?.id;
+        req.email = userData?.email;
         next();
       }
     );

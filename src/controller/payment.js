@@ -4,6 +4,7 @@ import crypto from "crypto";
 import { PaymentModel } from "../model/payment.js";
 import chalk from "chalk";
 import mongoose from "mongoose";
+import { transactionSuccessMail } from "../utils/nodeMailer.js";
 const generateTransactionId = () => {
   return `T${Date.now()}${Math.floor(Math.random() * 1000)}`;
 };
@@ -54,6 +55,7 @@ export const orderPayment = async (req, res) => {
       budget,
       amount,
       number,
+      email:req?.email
     });
 
     await createOrder.save();
@@ -61,6 +63,7 @@ export const orderPayment = async (req, res) => {
     const data = {
       // merchantId: "M22K8UH34V1RW",
       // merchantId: "PGTESTPAYUAT86",
+      email:req?.email,
       merchantId,
       merchantTransactionId: createOrder?._id || "SOMETHING IS WRONG",
       merchantUserId: "MUID" + req.userid,
@@ -74,7 +77,7 @@ export const orderPayment = async (req, res) => {
         type: "PAY_PAGE",
       },
     };
-
+   
     const payload = JSON.stringify(data);
     const payloadMain = Buffer.from(payload).toString("base64");
     // const key = "e9a87a23-76de-4156-968f-efd0018afdb8";
@@ -144,7 +147,7 @@ export const checkStatus = async (req, res) => {
         process.env.REDIRECTION_FAIL_URL_FRONTEND_PRODUCTION;
     }
 
-    console.log(chalk.bgRed(URL, key, merchantId, redirectionUrl, callbackUrl));
+    // console.log(chalk.bgRed(URL, key, merchantId, redirectionUrl, callbackUrl));
     const merchantTransactionId = req.params["txnId"];
 
     const saltKey = key;
@@ -192,16 +195,24 @@ export const checkStatus = async (req, res) => {
       updatedPayment.transactionStatus = "SUCCESS";
       updatedPayment.orderId = response.data.data.transactionId;
 
-      await updatedPayment.save();
-      console.log(chalk.bgMagenta("hi im success"));
+       await updatedPayment.save();
+       const updatedPaymentData = await PaymentModel.findOne({orderId:response.data.data.transactionId}).lean();
+       await transactionSuccessMail(updatedPaymentData);
 
+ 
+   
+      
       return res.status(200).redirect(redirectionUrlFrontendSUCCESS);
     } else {
       console.log(chalk.bgYellow("hi im failed", redirectionUrlFrontendFAIL));
       updatedPayment.transactionStatus = "FAILED";
       updatedPayment.orderId = response.data.data.transactionId;
       await updatedPayment.save();
-
+      console.log(chalk.bgMagenta("hi im success",JSON.stringify(updatedPayment)));
+      const updatedPaymentData = await PaymentModel.findOne({orderId:response.data.data.transactionId}).lean();
+      await transactionSuccessMail(updatedPaymentData);
+     
+      
       return res.status(400).redirect(redirectionUrlFrontendFAIL);
     }
   } catch (err) {
