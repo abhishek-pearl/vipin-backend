@@ -13,15 +13,16 @@ const propertySchema = new mongoose.Schema({
   category: {
     type: String,
     enum: [
-      "Commercial",
-      "Gold Auctions",
-      "Industrials",
-      "Others",
-      "Residential",
-      "Scrap, Plant & Machinery",
-      "Vehicle Auctions"
+      "commercial",
+      "gold_loan",
+      "industrials",
+      "others",
+      "residential",
+      "agriculture",
+      "vehicle",
     ],
     required: [true, "Category is required"],
+    trim: true,
   },
   state: {
     type: String,

@@ -1,12 +1,12 @@
 // validities
-export const accessTokenValidity = "15m";
-export const refreshTokenValidity = "15d";
+// export const accessTokenValidity = "15m";
+// export const refreshTokenValidity = "15d";
 // ----------------------------------------------------------------------------------------
 
 // httpOnlyCookieValidity - setting the validity for http only cookie
 const httpOnlyCookieValidity = () => {
   let currentDate = new Date();
-  return new Date(currentDate.getTime() + 15 * 24 * 60 * 60 * 1000); // 15 days validity
+  return new Date(currentDate.getTime() + 365 * 24 * 60 * 60 * 1000); // 15 days validity
 };
 
 // saveAccessTokenToCookie - this method saved the access token to the http only cookie

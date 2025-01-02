@@ -3,7 +3,7 @@ import { asyncHandler } from "../utils/errorHandler/asyncHandler.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { saveAccessTokenToCookie } from "../utils/index.js";
-import { accessTokenValidity, refreshTokenValidity } from "../utils/index.js";
+// import { accessTokenValidity, refreshTokenValidity } from "../utils/index.js";
 import { authModel } from "../model/auth.js";
 
 // -------------------------------------------------------------------------------------------
@@ -43,7 +43,7 @@ export const login = asyncHandler(async (req, res) => {
       isAuth: true,
     },
     process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: accessTokenValidity }
+    { expiresIn: "360d" }
   );
 
   // Saving accessToken to the httpOnly Cookie
@@ -166,9 +166,6 @@ export const signup = asyncHandler(async (req, res) => {
 
   const hashPassword = await bcrypt.hash(password, 10);
 
-  
-
-
   const savedUser = await authModel.create({
     userName: userName,
     password: hashPassword,
@@ -182,12 +179,7 @@ export const signup = asyncHandler(async (req, res) => {
   });
 });
 
-export const registrationOrder = asyncHandler(async (req,res,next)=>{
-
-  
-
-
-});
+export const registrationOrder = asyncHandler(async (req, res, next) => {});
 
 // @desc - to fetch the users data
 // @route - POST /auth/logout

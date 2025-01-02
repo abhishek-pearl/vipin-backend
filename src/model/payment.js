@@ -36,6 +36,12 @@ const paymentSchema = new mongoose.Schema({
     },
     amount:{
         type:Number
+    },
+    number:{
+        type:Number
+    },
+    userType:{
+        type:String
     }
 },{
     timestamps:true
