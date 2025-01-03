@@ -10,4 +10,5 @@ auctionRouter.route('/properties').get(getProperties)
 auctionRouter.route('/:id').get(verifyTokenMiddlewareAuction, getProperty).delete(verifyTokenMiddleware, deleteProperty);
 
 
+
 export default auctionRouter;
