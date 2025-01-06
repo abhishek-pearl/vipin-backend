@@ -31,6 +31,8 @@ app.use(
       "http://localhost:5173",
       "https://vipin-mern.vercel.app",
       "https://vipin-admin.vercel.app",
+      "https://sdlk.in",
+      "https://admin.sdlk.in",
     ],
     credentials: true,
     methods: ["GET", "PUT", "POST", "PATCH", "DELETE"],
@@ -51,7 +53,7 @@ app.use("/api/v1/user", userAuthRouter);
 app.use("/api/v1/news", newsRouter);
 app.use("/api/v1/order", orderRouter);
 app.use("/api/v1/services", serviceRoutes);
-app.use("/api/v1/payment",paymentRouter);
+app.use("/api/v1/payment", paymentRouter);
 app.use(error);
 app.listen(PORT, () => {
   console.log(chalk.bgBlue(`Server Listening to PORT ${PORT}`));

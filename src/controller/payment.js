@@ -55,7 +55,7 @@ export const orderPayment = async (req, res) => {
       budget,
       amount,
       number,
-      email:req?.email
+      email: req?.email,
     });
 
     await createOrder.save();
@@ -63,7 +63,7 @@ export const orderPayment = async (req, res) => {
     const data = {
       // merchantId: "M22K8UH34V1RW",
       // merchantId: "PGTESTPAYUAT86",
-      email:req?.email,
+      email: req?.email,
       merchantId,
       merchantTransactionId: createOrder?._id || "SOMETHING IS WRONG",
       merchantUserId: "MUID" + req.userid,
@@ -77,7 +77,7 @@ export const orderPayment = async (req, res) => {
         type: "PAY_PAGE",
       },
     };
-   
+
     const payload = JSON.stringify(data);
     const payloadMain = Buffer.from(payload).toString("base64");
     // const key = "e9a87a23-76de-4156-968f-efd0018afdb8";
@@ -195,24 +195,26 @@ export const checkStatus = async (req, res) => {
       updatedPayment.transactionStatus = "SUCCESS";
       updatedPayment.orderId = response.data.data.transactionId;
 
-       await updatedPayment.save();
-       const updatedPaymentData = await PaymentModel.findOne({orderId:response.data.data.transactionId}).lean();
-       await transactionSuccessMail(updatedPaymentData);
+      await updatedPayment.save();
+      const updatedPaymentData = await PaymentModel.findOne({
+        orderId: response.data.data.transactionId,
+      }).lean();
+      await transactionSuccessMail(updatedPaymentData);
 
- 
-   
-      
       return res.status(200).redirect(redirectionUrlFrontendSUCCESS);
     } else {
       console.log(chalk.bgYellow("hi im failed", redirectionUrlFrontendFAIL));
       updatedPayment.transactionStatus = "FAILED";
       updatedPayment.orderId = response.data.data.transactionId;
       await updatedPayment.save();
-      console.log(chalk.bgMagenta("hi im success",JSON.stringify(updatedPayment)));
-      const updatedPaymentData = await PaymentModel.findOne({orderId:response.data.data.transactionId}).lean();
+      console.log(
+        chalk.bgMagenta("hi im success", JSON.stringify(updatedPayment))
+      );
+      const updatedPaymentData = await PaymentModel.findOne({
+        orderId: response.data.data.transactionId,
+      }).lean();
       await transactionSuccessMail(updatedPaymentData);
-     
-      
+
       return res.status(400).redirect(redirectionUrlFrontendFAIL);
     }
   } catch (err) {
@@ -249,7 +251,7 @@ export const createPayment = asyncHandler(async (req, res) => {
 // @route GET /api/payments
 // @access Public
 export const getPayments = asyncHandler(async (req, res) => {
-  const payments = await PaymentModel.find({}).sort("-createdAt");
+  const payments = await PaymentModel.find({}).sort("-createdAt").lean();
   res.status(200).json(payments);
 });
 
