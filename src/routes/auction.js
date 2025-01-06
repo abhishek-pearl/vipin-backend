@@ -5,7 +5,7 @@ import { upload } from '../utils/multer.js';
 
 const auctionRouter = express.Router();
 
-auctionRouter.route('/').get(verifyTokenMiddlewareAuction,getProperties).post(upload.fields([{ name: 'banner', maxCount: 1 }, { name: 'downloads', maxCount: 1 }]), addProperties).patch(verifyTokenMiddleware, updateProperty)
+auctionRouter.route('/').get(verifyTokenMiddlewareAuction,getProperties).post(upload.fields([{ name: 'banner', maxCount: 1 }, { name: 'downloads', maxCount: 1 }]), addProperties).patch(verifyTokenMiddleware,upload.fields([{ name: 'banner', maxCount: 1 }, { name: 'downloads', maxCount: 1 }]), updateProperty)
 auctionRouter.route('/properties').get(getProperties)
 auctionRouter.route('/:id').get(verifyTokenMiddlewareAuction, getProperty).delete(verifyTokenMiddleware, deleteProperty);
 

@@ -195,7 +195,59 @@ export const addProperties = asyncHandler(async (req, res) => {
 //Update property data
 
 export const updateProperty = asyncHandler(async (req, res) => {
-  console.log("updates");
+
+  const {applicationSubmissionDate,auctionEndTime,auctionEndDate,auctionStartTime,auctionType,propertyType,borrowerName,serviceProvider} = req.body;
+  const {id} = req.params;
+  let query = {};
+   
+  if(applicationSubmissionDate)
+     query.applicationSubmissionDate = applicationSubmissionDate
+
+  if(auctionEndTime)
+     query.auctionEndTime = auctionEndTime
+  
+  if(auctionEndDate)
+     query.applicationSubmissionDate = applicationSubmissionDate
+  
+  if(auctionStartTime)
+     query.auctionStartTime = auctionStartTime
+  
+  if(auctionStartTime)
+     query.auctionStartTime = auctionStartTime
+  
+  if(auctionType)
+     query.auctionType = auctionType
+  
+  if(propertyType)
+     query.propertyType = propertyType
+  
+  if(borrowerName)
+     query.borrowerName = borrowerName
+  
+  if(applicationSubmissionDate)
+     query.applicationSubmissionDate = applicationSubmissionDate
+   
+  const {banner,downloads} = req.files;
+
+  if(banner.length > 0)
+  {
+    query.banner = banner;
+  }
+
+  if(downloads.length > 0)
+  { 
+     query.downloads = downloads;
+  }
+  const updatedAuction = await propertyModel.findByIdAndUpdate(id,{
+    ...query
+  },{
+    upsert:true
+  });
+
+  res.status(200).json({status:true,message:"Auction Updated Successfully !!",data:updatedAuction})
+  
+  
+  
 });
 
 // DELETE
