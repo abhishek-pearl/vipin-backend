@@ -31,7 +31,6 @@ app.use(
       "http://localhost:5173",
       "https://vipin-mern.vercel.app",
       "https://vipin-admin.vercel.app",
-      "https://sdlk.in",
       "https://admin.sdlk.in",
     ],
     credentials: true,

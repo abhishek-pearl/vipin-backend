@@ -21,7 +21,7 @@ export const getProperty = asyncHandler(async (req, res) => {
     var result = await propertyModel
       .findOne({ auctionId: id })
       .select(
-        "banner auctionId title category state city area description bankName reservePrice emd serviceProvider borrowerName propertyType auctionType auctionStartDate auctionStartTime auctionEndDate auctionEndTime applicationSubmissionDate"
+        "banner auctionId title category state city area description bankName reservePrice emd serviceProvider borrowerName propertyType auctionType auctionStartDate auctionStartTime auctionEndDate auctionEndTime applicationSubmissionDate downloads"
       );
   }
   res.status(200).json({ status: true, result: result });
@@ -195,7 +195,40 @@ export const addProperties = asyncHandler(async (req, res) => {
 //Update property data
 
 export const updateProperty = asyncHandler(async (req, res) => {
-  console.log("updates");
+  const { id } = req.params;
+
+  let query = {};
+  const isExists = await propertyModel.findOne({ auctionId: id }).lean();
+
+  if (!isExists)
+    return res
+      .status(404)
+      .json({ status: false, message: "Property Details Not Found !!" });
+
+  const { banner, downloads } = req.files;
+
+  if (banner && banner.length > 0) {
+    query.banner = banner;
+  }
+
+  if (downloads && downloads.length > 0) {
+    query.downloads = downloads;
+  }
+  console.log(chalk.bgYellowBright("query", JSON.stringify(query)));
+
+  const updatedAuction = await propertyModel.findOneAndUpdate(
+    { auctionId: id },
+    {
+      ...query,
+      ...req.body,
+    }
+  );
+
+  res.status(200).json({
+    status: true,
+    message: "Auction Updated Successfully !!",
+    data: updatedAuction,
+  });
 });
 
 // DELETE
