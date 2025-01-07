@@ -19,7 +19,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
+app.use(express.json({ limits: "50mb" }));
 app.use(cookieParser());
 
 app.use(
@@ -31,6 +31,7 @@ app.use(
       "http://localhost:5173",
       "https://vipin-mern.vercel.app",
       "https://vipin-admin.vercel.app",
+      "https://sdlk.in",
       "https://admin.sdlk.in",
     ],
     credentials: true,
