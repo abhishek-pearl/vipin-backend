@@ -14,6 +14,7 @@ import { orderRouter } from "./src/routes/order.js";
 import { serviceRoutes } from "./src/routes/services.js";
 import morgan from "morgan";
 import { paymentRouter } from "./src/routes/payment.js";
+import bannerRouter from "./src/routes/banner.js";
 
 dotenv.config();
 const app = express();
@@ -54,6 +55,7 @@ app.use("/api/v1/news", newsRouter);
 app.use("/api/v1/order", orderRouter);
 app.use("/api/v1/services", serviceRoutes);
 app.use("/api/v1/payment", paymentRouter);
+app.use("/api/v1/banner", bannerRouter);
 app.use(error);
 app.listen(PORT, () => {
   console.log(chalk.bgBlue(`Server Listening to PORT ${PORT}`));

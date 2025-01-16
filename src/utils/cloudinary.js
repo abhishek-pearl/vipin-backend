@@ -10,12 +10,19 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export const uploadFile = async (files) => {
+export const uploadFile = async (myfiles) => {
   try {
     // Ensure files is an array and each file has a path
-    if (!Array.isArray(files) || files.some(file => !file.path)) {
-      throw new Error("Invalid file data provided.");
-    }
+
+    // if (!Array.isArray(files) || files.some((file) => !file.path)) {
+    //   throw new Error("Invalid file data provided.");
+    // }
+
+    const files = Array.isArray(myfiles) ? myfiles : [myfiles];
+
+    // if (files.some((f) => !f.path)) {
+    //   throw new Error("Invalid file data provided.");
+    // }
 
     const resultArr = await Promise.all(
       files.map(async (file) => {
