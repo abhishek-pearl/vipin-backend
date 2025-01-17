@@ -1,3 +1,4 @@
+import chalk from "chalk";
 import { prospectsModel } from "../model/prospects.js";
 import { uploadFile } from "../utils/cloudinary.js";
 import { asyncHandler } from "../utils/errorHandler/asyncHandler.js";
@@ -49,3 +50,28 @@ export const submitContactForm = asyncHandler(async (req, res) => {
       .json({ status: true, message: "Contact mail sent successfully" });
   }
 });
+export const getContactDetails = asyncHandler(async (req, res) => {
+  
+
+    const data = await prospectsModel.find().lean();
+    res
+      .status(200)
+      .json({ status: true, message: "Data Fetched successfully",data });
+  }
+);
+export const deleteContactDetails = asyncHandler(async (req, res) => {
+  
+    const {id} = req.params;
+    const data = await prospectsModel.findOneAndDelete({_id:id});
+   
+    if(!data)
+    {
+      res
+      .status(400)
+      .json({ status: true, message: "Data Deletion Failed !!"});
+    }
+    res
+      .status(200)
+      .json({ status: true, message: "Data Deleted  successfully",data});
+  }
+);
