@@ -51,27 +51,19 @@ export const submitContactForm = asyncHandler(async (req, res) => {
   }
 });
 export const getContactDetails = asyncHandler(async (req, res) => {
-  
-
-    const data = await prospectsModel.find().lean();
-    res
-      .status(200)
-      .json({ status: true, message: "Data Fetched successfully",data });
-  }
-);
+  const data = await prospectsModel.find().lean();
+  res
+    .status(200)
+    .json({ status: true, message: "Data Fetched successfully", data });
+});
 export const deleteContactDetails = asyncHandler(async (req, res) => {
-  
-    const {id} = req.params;
-    const data = await prospectsModel.findOneAndDelete({_id:id});
-   
-    if(!data)
-    {
-      res
-      .status(400)
-      .json({ status: true, message: "Data Deletion Failed !!"});
-    }
-    res
-      .status(200)
-      .json({ status: true, message: "Data Deleted  successfully",data});
+  const { id } = req.params;
+  const data = await prospectsModel.findOneAndDelete({ _id: id });
+
+  if (!data) {
+    res.status(400).json({ status: true, message: "Data Deletion Failed !!" });
   }
-);
+  res
+    .status(200)
+    .json({ status: true, message: "Data Deleted  successfully", data });
+});
