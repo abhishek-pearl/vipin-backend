@@ -19,11 +19,18 @@ router
       { name: "midSectionImage", maxCount: 1 },
       { name: "stepsToAvailLoanImage", maxCount: 1 },
       { name: "topSectionFeaturesImages", maxCount: 4 }, // Array of images
-      { name: "bottomSectionFeaturesImages", maxCount: 4 }, // Array of images
+      { name: "bottomSectionFeaturesImages", maxCount: 40 }, // Array of images
     ]),
     createService
   )
   .get(getAllServices);
-router.route("/:id").get(getServiceById).delete(deleteService);
+router.route("/:id").get(getServiceById).delete(deleteService).patch(upload.fields([
+  { name: "serviceIcon", maxCount: 1 },
+  { name: "topSectionImage", maxCount: 1 },
+  { name: "midSectionImage", maxCount: 1 },
+  { name: "stepsToAvailLoanImage", maxCount: 1 },
+  { name: "topSectionFeaturesImages", maxCount: 4 }, // Array of images
+  { name: "bottomSectionFeaturesImages", maxCount: 40 }, // Array of images
+]),updateService);
 
 export const serviceRoutes = router;

@@ -78,10 +78,10 @@ export const createService = asyncHandler(async (req, res, next) => {
   }
 
   for (let i = 0; i < (bottomSection?.features?.length || 0); i++) {
-    const currImgUrl = req.files.bottomSectionFeaturesImages[i];
+    const currImgUrl = req.files.bottomSectionFeaturesImages[i]?.secure_url;
     const payload = {
       icon: currImgUrl || {secure_url:"Image URL error"},
-      description: bottomSection.features[i].heading,
+      description: bottomSection.features[i].description,
       ...bottomSection.features[i],
     };
     bottomSection.features[i] = payload;
@@ -155,8 +155,10 @@ export const updateService = asyncHandler(async (req, res, next) => {
   if(bottomSection)
    query.bottomSection = JSON.parse(bottomSection || "{}");
 
+
+
   await Promise.all(
-    fileKeys.map(async (currKey) => {
+    fileKeys?.map(async (currKey) => {
       const uploadedFiles = await uploadFile(req.files[currKey]);
       updatedFiles[currKey] = uploadedFiles.result || [];
     })
@@ -168,17 +170,24 @@ export const updateService = asyncHandler(async (req, res, next) => {
 
 
   
+  console.log();
+  let indexToTraverseBottomSectionImage = 0;
+  if(query?.bottomSection && query?.bottomSection?.features){
+    for (let i = 0; i < query?.bottomSection?.features.length; i++) {
+      if(query?.bottomSection?.features?.[i]?.icon)
+      {
+        continue;
+      }
+      else
+      {
 
-
-  if(query?.bottomSection && query?.bottomSection?.features?.length === (req.files?.bottomSectionFeaturesImages)?.length ){
-    for (let i = 0; i < (bottomSection?.features?.length || 0); i++) {
-      const currImgUrl = req.files?.bottomSectionFeaturesImages[i];
-      const payload = {
-        icon: currImgUrl || {secure_url:"Image URL error"},
-        description: bottomSection.features[i].heading,
-        ...bottomSection?.features[i],
-      };
-      bottomSection.features[i] = payload;
+        const payload = {
+          icon: req.files?.bottomSectionFeaturesImages[indexToTraverseBottomSectionImage]?.secure_url || "Image URL error",
+          ...query.bottomSection?.features?.[i],
+        };
+        query.bottomSection.features[i] = payload;
+        indexToTraverseBottomSectionImage++;
+      }
     } 
   }
   else{
@@ -189,22 +198,25 @@ export const updateService = asyncHandler(async (req, res, next) => {
 
    
   if(req.files?.serviceIcon && req.files?.serviceIcon.length > 0 )
-     query.serviceIcon = req.files.serviceIcon[0]?.secure_url || "Image URL error";
+     query.serviceIcon = req.files.serviceIcon?.[0]?.secure_url || "Image URL error";
   
-  
+  console.log(query) 
   if(req.files?.topSectionImage && req.files?.topSectionImage.length > 0)
+  {
     query.topSection.banner =
-    req.files?.topSectionImage[0]?.secure_url || "Image URL error";
+    req.files?.topSectionImage?.[0]?.secure_url || "Image URL error";
+  }
 
-  // midSection.banner =
-  // req.files?.midSectionImage[0]?.secure_url || "Image URL error";
+    
   if(query?.midSection && req.files?.stepsToAvailLoanImage && req.files?.stepsToAvailLoanImage.length > 0 )
+  {
     query.midSection.stepsToAvailLoan.banner =
-    req.files?.stepsToAvailLoanImage[0]?.secure_url || "Image URL error";
+    req.files?.stepsToAvailLoanImage?.[0]?.secure_url || "Image URL error";
+  }
 
 
 
-  const updatedService = await Service.findByIdAndUpdate(req.params.id, query, {
+  const updatedService = await serviceModel.findOneAndUpdate({_id:req.params.id}, query, {
     new: true,
     runValidators: true,
   });

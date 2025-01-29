@@ -30,8 +30,9 @@ export const uploadFile = async (myfiles) => {
           const res = await cloudinary.uploader.upload(file.path, {
             folder: "vipin",
           });
-          console.log("Upload successful:", res);
-
+          // console.log("Upload successful:", res);
+          // console.log("file.path", file);
+          
           // Delete file after successful upload
           fs.unlink(file.path, (err) => {
             if (err) {
