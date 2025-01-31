@@ -43,7 +43,7 @@ export const login = asyncHandler(async (req, res) => {
       isAuth: true,
     },
     process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: "2m" }
+    { expiresIn: "360d" }
   );
 
   // Saving accessToken to the httpOnly Cookie
@@ -55,7 +55,7 @@ export const login = asyncHandler(async (req, res) => {
       id: user._id,
     },
     process.env.REFRESH_TOKEN_SECRET,
-    { expiresIn: "25d" } // Longer expiration for refresh token
+    { expiresIn: "360d" } // Longer expiration for refresh token
   );
 
   // Saving refreshToken to the httpOnly Cookie
@@ -118,7 +118,7 @@ export const refreshToken = asyncHandler(async (req, res) => {
           isAuth: true,
         },
         process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "5m" } // Short-lived access token
+        { expiresIn: "360d" } // Short-lived access token
       );
   
       // Send new access token
