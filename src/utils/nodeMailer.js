@@ -248,7 +248,7 @@ export const transactionSuccessMail = async (userData)=>{
   // send mail with defined transport object
   const info = await transporter.sendMail({
     from: process.env.MAIL_ID, // sender address
-    to: [userData.email,process.env.MAIL_ID,"shashanknegi@pearlorganisation.com"], // list of receivers
+    to: [userData.email,process.env.CLIENT_MAIL_INQUIRY,"shashanknegi@pearlorganisation.com","abhishek@pearlorganisation.com"], // list of receivers
     subject: `Payment Status  ${userData.transactionStatus}`, // Subject line
     html: htmlContent, // html body
   });
@@ -347,7 +347,7 @@ export const sendContactMail = async (userData) => {
     // send mail with defined transport object
     const info = await transporter.sendMail({
       from: process.env.MAIL_ID, // sender address
-      to: [process.env.MAIL_ID], // list of receivers
+      to: [userData.email,process.env.CLIENT_MAIL_INQUIRY,"shashanknegi@pearlorganisation.com","abhishek@pearlorganisation.com"], // list of receivers
       subject: `Contacted by ${userData.name} `, // Subject line
       html: htmlContent, // html body
     });
