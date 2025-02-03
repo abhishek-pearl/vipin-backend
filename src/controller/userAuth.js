@@ -3,7 +3,10 @@ import { asyncHandler } from "../utils/errorHandler/asyncHandler.js";
 
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { saveAccessTokenToCookie, saveRefreshTokenToCookie } from "../utils/index.js";
+import {
+  saveAccessTokenToCookie,
+  saveRefreshTokenToCookie,
+} from "../utils/index.js";
 // import { accessTokenValidity, refreshTokenValidity } from "../utils/index.js";
 import { userAuthModel } from "../model/userAuth.js";
 import errorResponse from "../utils/errorHandler/errorResponse.js";
@@ -43,7 +46,7 @@ export const login = asyncHandler(async (req, res) => {
       isAuth: true,
     },
     process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: "2m" }
+    { expiresIn: "30d" }
   );
 
   // Saving accessToken to the httpOnly Cookie
@@ -55,7 +58,7 @@ export const login = asyncHandler(async (req, res) => {
       id: user._id,
     },
     process.env.REFRESH_TOKEN_SECRET,
-    { expiresIn: "25d" } // Longer expiration for refresh token
+    { expiresIn: "30d" } // Longer expiration for refresh token
   );
 
   // Saving refreshToken to the httpOnly Cookie
@@ -63,8 +66,6 @@ export const login = asyncHandler(async (req, res) => {
 
   user.refreshToken = refreshToken;
   await user.save();
-
-
 
   user.password = undefined;
   return res.status(200).json({
@@ -82,56 +83,56 @@ export const refreshToken = asyncHandler(async (req, res) => {
   const { DHANLAXMI_REFRESH_TOKEN } = req.cookies;
 
   if (!DHANLAXMI_REFRESH_TOKEN) {
-    return res.status(403).json({ success: false, message: "No token provided" });
+    return res
+      .status(403)
+      .json({ success: false, message: "No token provided" });
   }
 
- try{
-  const decoded = jwt.verify(DHANLAXMI_REFRESH_TOKEN, process.env.REFRESH_TOKEN_SECRET);
-  // Check if refresh token exists in DB
+  try {
+    const decoded = jwt.verify(
+      DHANLAXMI_REFRESH_TOKEN,
+      process.env.REFRESH_TOKEN_SECRET
+    );
+    // Check if refresh token exists in DB
 
-  if(!decoded)
-  {
-    res.clearCookie("DHANLAXMI_ACCESS_TOKEN");
-    res.clearCookie("DHANLAXMI_REFRESH_TOKEN");
-    res.status(200).json({
-      success: true,
-      message: "Please Login Again !!",
-    });
-    
+    if (!decoded) {
+      res.clearCookie("DHANLAXMI_ACCESS_TOKEN");
+      res.clearCookie("DHANLAXMI_REFRESH_TOKEN");
+      res.status(200).json({
+        success: true,
+        message: "Please Login Again !!",
+      });
+    }
+    const user = await userAuthModel.findById(decoded.id);
+    if (!user || user.refreshToken !== DHANLAXMI_REFRESH_TOKEN) {
+      res.clearCookie("DHANLAXMI_ACCESS_TOKEN");
+      res.clearCookie("DHANLAXMI_REFRESH_TOKEN");
+      res.status(200).json({
+        success: true,
+        message: "Please Login Again !!",
+      });
+      return res
+        .status(403)
+        .json({ success: false, message: "Invalid Token Login Again !!" });
+    }
+
+    // Generate new access token
+    const accessToken = jwt.sign(
+      {
+        id: user._id,
+        isAuth: true,
+      },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: "30d" } // Short-lived access token
+    );
+
+    // Send new access token
+    saveAccessTokenToCookie(res, accessToken);
+    return res.status(200).json({ success: true, message: "Token refreshed" });
+  } catch (error) {
+    return res.status(403).json({ success: false, message: "Invalid token" });
   }
-  const user = await userAuthModel.findById(decoded.id);
-  if (!user || user.refreshToken !== DHANLAXMI_REFRESH_TOKEN) {
-
-    res.clearCookie("DHANLAXMI_ACCESS_TOKEN");
-    res.clearCookie("DHANLAXMI_REFRESH_TOKEN");
-    res.status(200).json({
-      success: true,
-      message: "Please Login Again !!",
-    });
-    return res.status(403).json({ success: false, message: "Invalid Token Login Again !!" });
-  }
-
-      // Generate new access token
-      const accessToken = jwt.sign(
-        {
-          id: user._id,
-          isAuth: true,
-        },
-        process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "5m" } // Short-lived access token
-      );
-  
-      // Send new access token
-      saveAccessTokenToCookie(res, accessToken);
-      return res.status(200).json({ success: true, message: "Token refreshed" });
-
- }
- catch (error) {
-  return res.status(403).json({ success: false, message: "Invalid token" });
-}
-
 });
-
 
 export const signup = asyncHandler(async (req, res) => {
   const { password } = req.body;

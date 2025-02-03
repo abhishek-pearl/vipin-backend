@@ -43,7 +43,7 @@ export const login = asyncHandler(async (req, res) => {
       isAuth: true,
     },
     process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: "360d" }
+    { expiresIn: "30d" }
   );
 
   // Saving accessToken to the httpOnly Cookie

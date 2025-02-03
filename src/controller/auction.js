@@ -142,11 +142,12 @@ export const addProperties = asyncHandler(async (req, res) => {
     auctionEndDate,
     auctionEndTime,
     applicationSubmissionDate,
+    auctionId,
   } = req?.body;
 
-  let auctionId = 200000;
-  const auctionsCount = await propertyModel.countDocuments();
-  auctionId += 1 + auctionsCount;
+  // let auctionId = 200000;
+  // const auctionsCount = await propertyModel.countDocuments();
+  // auctionId += 1 + auctionsCount;
 
   let uploadedBanner, uploadedDownloads;
 
@@ -163,7 +164,7 @@ export const addProperties = asyncHandler(async (req, res) => {
   const property = {
     auctionId,
     title,
-    category,
+    category: category || "urgent",
     state,
     city,
     area,
@@ -177,9 +178,9 @@ export const addProperties = asyncHandler(async (req, res) => {
     borrowerName,
     propertyType,
     auctionType,
-    auctionStartDate: new Date(auctionStartDate),
+    auctionStartDate: new Date(auctionStartDate || Date.now()),
     auctionStartTime,
-    auctionEndDate: new Date(auctionEndDate),
+    auctionEndDate: new Date(auctionEndDate || Date.now()),
     auctionEndTime,
     applicationSubmissionDate,
     downloads: uploadedDownloads.result,
