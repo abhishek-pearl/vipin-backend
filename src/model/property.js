@@ -57,10 +57,12 @@ const propertySchema = new mongoose.Schema({
   },
   reservePrice: {
     type: Number,
+    default: 0,
     // required: [true, "Reserve price is required"],
   },
   emd: {
     type: Number,
+    default: 0,
     // required: [true, "Reserve price is required"],
   },
   serviceProvider: {

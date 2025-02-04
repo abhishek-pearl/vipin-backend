@@ -1,24 +1,24 @@
 import chalk from "chalk";
 import nodemailer from "nodemailer";
 function convertMongoTimeToReadable(mongoTime) {
-    // Check if the input is a valid Date object or string
-    const date = new Date(mongoTime);
-    if (isNaN(date)) {
-        throw new Error("Invalid MongoDB time provided");
-    }
+  // Check if the input is a valid Date object or string
+  const date = new Date(mongoTime);
+  if (isNaN(date)) {
+    throw new Error("Invalid MongoDB time provided");
+  }
 
-    // Format the date
-    const options = {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: false, // Use 24-hour time format
-    };
+  // Format the date
+  const options = {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false, // Use 24-hour time format
+  };
 
-    return date.toLocaleString("en-US", options).replace(",", "");
+  return date.toLocaleString("en-US", options).replace(",", "");
 }
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -128,16 +128,20 @@ export const sendEnquiryMail = async (userData) => {
   // send mail with defined transport object
   const info = await transporter.sendMail({
     from: process.env.MAIL_ID, // sender address
-    to: [userData.email, process.env.MAIL_ID], // list of receivers
+    to: [
+      userData.email,
+      process.env.MAIL_ID,
+      process.env.CLIENT_MAIL_INQUIRY,
+      "abhishek@pearlorganisation.com",
+    ], // list of receivers
     subject: `Loan Enquiry by ${userData.name}`, // Subject line
     html: htmlContent, // html body
   });
-
 };
 
-export const transactionSuccessMail = async (userData)=>{
-    userData.createdAt = convertMongoTimeToReadable(userData.createdAt);
-    const htmlContent = `
+export const transactionSuccessMail = async (userData) => {
+  userData.createdAt = convertMongoTimeToReadable(userData.createdAt);
+  const htmlContent = `
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -248,19 +252,26 @@ export const transactionSuccessMail = async (userData)=>{
   // send mail with defined transport object
   const info = await transporter.sendMail({
     from: process.env.MAIL_ID, // sender address
-    to: [userData.email,process.env.MAIL_ID,"shashanknegi@pearlorganisation.com"], // list of receivers
+    to: [
+      userData.email,
+      process.env.CLIENT_MAIL_INQUIRY,
+      "shashanknegi@pearlorganisation.com",
+      "abhishek@pearlorganisation.com",
+    ], // list of receivers
     subject: `Payment Status  ${userData.transactionStatus}`, // Subject line
     html: htmlContent, // html body
   });
 
-  console.log("Im Sending mail for successfull completion of payment info",info);
-}
-
+  console.log(
+    "Im Sending mail for successfull completion of payment info",
+    info
+  );
+};
 
 // contact mail
 
 export const sendContactMail = async (userData) => {
-    const htmlContent = `
+  const htmlContent = `
       <!DOCTYPE html>
       <html lang="en">
       <head>
@@ -335,7 +346,7 @@ export const sendContactMail = async (userData) => {
                   <td>${userData.mobile}</td>
               </tr>
               <tr>
-                  <td><strong>Mobile</strong></td>
+                  <td><strong>Message</strong></td>
                   <td>${userData.message}</td>
               </tr>
              
@@ -343,20 +354,19 @@ export const sendContactMail = async (userData) => {
       </div>
   </body>
   </html>`;
-  
-    // send mail with defined transport object
-    const info = await transporter.sendMail({
-      from: process.env.MAIL_ID, // sender address
-      to: [process.env.MAIL_ID], // list of receivers
-      subject: `Contacted by ${userData.name} `, // Subject line
-      html: htmlContent, // html body
-    });
-  
-  };
 
+  // send mail with defined transport object
+  const info = await transporter.sendMail({
+    from: process.env.MAIL_ID, // sender address
+    to: [
+      userData.email,
+      process.env.CLIENT_MAIL_INQUIRY,
+      "shashanknegi@pearlorganisation.com",
+      "abhishek@pearlorganisation.com",
+    ], // list of receivers
+    subject: `Contacted by ${userData.name} `, // Subject line
+    html: htmlContent, // html body
+  });
+};
 
 //verification mail
-
-
-
-

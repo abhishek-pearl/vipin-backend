@@ -52,9 +52,48 @@ export const submitContactForm = asyncHandler(async (req, res) => {
 });
 export const getContactDetails = asyncHandler(async (req, res) => {
   const data = await prospectsModel.find().lean();
-  res
-    .status(200)
-    .json({ status: true, message: "Data Fetched successfully", data });
+  try {
+    let { startDate, endDate } = req.query;
+
+    let filter = {}; // Default empty filter (fetch all leads)
+
+    if (startDate && endDate) {
+      // If both startDate and endDate are provided
+      filter.$or = [
+        {
+          createdAt: {
+            $gte: new Date(startDate),
+            $lte: new Date(endDate),
+          },
+        },
+      ];
+    } else if (startDate) {
+      // If only startDate is provided, get records from that date onward
+      filter.createdAt = { $gte: new Date(startDate) };
+    } else if (endDate) {
+      // If only endDate is provided, get records up to that date
+      filter.createdAt = { $lte: new Date(endDate) };
+    }
+
+    // Fetch filtered leads (or all leads if no filter applied)
+    const leads = await prospectsModel.find(filter).sort({ createdAt: -1 });
+    const explain = await prospectsModel
+      .find(filter)
+      .sort({ createdAt: -1 })
+      .explain();
+
+    console.log("explain", explain);
+    console.log("explain", JSON.stringify(filter));
+
+    res.status(200).json({
+      status: true,
+      message: "Data Fetched successfully",
+      data: leads,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
 });
 export const deleteContactDetails = asyncHandler(async (req, res) => {
   const { id } = req.params;

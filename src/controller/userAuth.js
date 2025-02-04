@@ -46,7 +46,7 @@ export const login = asyncHandler(async (req, res) => {
       isAuth: true,
     },
     process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: "30d" }
+    { expiresIn: "360d" }
   );
 
   // Saving accessToken to the httpOnly Cookie
@@ -58,7 +58,7 @@ export const login = asyncHandler(async (req, res) => {
       id: user._id,
     },
     process.env.REFRESH_TOKEN_SECRET,
-    { expiresIn: "30d" } // Longer expiration for refresh token
+    { expiresIn: "360d" } // Longer expiration for refresh token
   );
 
   // Saving refreshToken to the httpOnly Cookie
@@ -103,6 +103,7 @@ export const refreshToken = asyncHandler(async (req, res) => {
         message: "Please Login Again !!",
       });
     }
+
     const user = await userAuthModel.findById(decoded.id);
     if (!user || user.refreshToken !== DHANLAXMI_REFRESH_TOKEN) {
       res.clearCookie("DHANLAXMI_ACCESS_TOKEN");
@@ -123,7 +124,7 @@ export const refreshToken = asyncHandler(async (req, res) => {
         isAuth: true,
       },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "30d" } // Short-lived access token
+      { expiresIn: "360d" } // Short-lived access token
     );
 
     // Send new access token
