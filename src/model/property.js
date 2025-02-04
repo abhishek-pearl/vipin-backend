@@ -8,7 +8,7 @@ const propertySchema = new mongoose.Schema({
   },
   title: {
     type: String,
-    required: [true, "title in required"],
+    // required: [true, "title in required"],
   },
   category: {
     type: String,
@@ -20,91 +20,95 @@ const propertySchema = new mongoose.Schema({
       "residential",
       "agriculture",
       "vehicle",
+      "urgent",
     ],
-    required: [true, "Category is required"],
+    default: "urgent",
+    // required: [true, "Category is required"],
     trim: true,
   },
   state: {
     type: String,
-    required: [true, "State is required"],
+    // required: [true, "State is required"],
   },
   city: {
     type: String,
-    required: [true, "City is required"],
+    // required: [true, "City is required"],
   },
   area: {
     type: String,
-    required: [true, "Area/Town is required"],
+    // required: [true, "Area/Town is required"],
   },
   description: {
     type: String,
-    required: [true, "Description is required"],
+    // required: [true, "Description is required"],
   },
 
   bankName: {
     type: String,
-    required: [true, "Bank Name is required"],
+    // required: [true, "Bank Name is required"],
   },
   branch: {
     type: String,
-    required: [true, "Branch Name is required"],
+    // required: [true, "Branch Name is required"],
   },
   contact: {
     type: String,
-    required: [true, "Mobile Number is required"],
+    // required: [true, "Mobile Number is required"],
   },
   reservePrice: {
     type: Number,
-    required: [true, "Reserve price is required"],
+    default: 0,
+    // required: [true, "Reserve price is required"],
   },
   emd: {
     type: Number,
-    required: [true, "Reserve price is required"],
+    default: 0,
+    // required: [true, "Reserve price is required"],
   },
   serviceProvider: {
     type: String,
-    required: [true, "Service Provider is required"],
+    // required: [true, "Service Provider is required"],
   },
 
   borrowerName: {
     type: String,
-    required: [true, "Borrower Name is required"],
+    // required: [true, "Borrower Name is required"],
   },
   propertyType: {
     type: String,
-    required: [true, "Borrower Name is required"],
+    // required: [true, "Borrower Name is required"],
   },
   auctionType: {
     type: String,
-    required: [true, "Borrower Name is required"],
+    // required: [true, "Borrower Name is required"],
   },
   auctionStartDate: {
     type: Date,
-    required: [true, "Auction start date is required"],
+    // required: [true, "Auction start date is required"],
   },
   auctionStartTime: {
     type: String,
-    required: [true, "auctionStartTime is required"],
+    // required: [true, "auctionStartTime is required"],
   },
   auctionEndDate: {
     type: Date,
-    required: [true, "Auction end date is required"],
+    // required: [true, "Auction end date is required"],
   },
   auctionEndTime: {
     type: String,
-    required: [true, "auctionEndTime is required"],
+    // required: [true, "auctionEndTime is required"],
   },
   applicationSubmissionDate: {
     type: String,
-    required: [true, "applicationSubmissionDate is required"],
+    // required: [true, "applicationSubmissionDate is required"],
   },
   downloads: {
     type: [],
-    required: [true, "Downloadable file is required"],
+    // required: [true, "Downloadable file is required"],
   },
   banner: {
     type: [],
-    required: [true, "Banner is required"],
+    // required: [true, "Banner is required"],
   },
 });
 

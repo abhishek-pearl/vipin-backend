@@ -49,7 +49,7 @@ export const updatesNews = asyncHandler(async (req, res) => {
     res.status(500).json({ status: false, message: "id not provided" });
   }
   const payload = { title, description, url };
-  await newsModel.findOneAndUpdate(id, payload);
+  await newsModel.findOneAndUpdate({ _id: id }, payload);
   res.status(200).json({ status: true, message: "News Updated Successfully" });
 });
 

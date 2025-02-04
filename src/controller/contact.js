@@ -51,27 +51,51 @@ export const submitContactForm = asyncHandler(async (req, res) => {
   }
 });
 export const getContactDetails = asyncHandler(async (req, res) => {
-  
+  const data = await prospectsModel.find().lean();
+  try {
+    let { startDate, endDate } = req.query;
 
-    const data = await prospectsModel.find().lean();
-    res
-      .status(200)
-      .json({ status: true, message: "Data Fetched successfully",data });
-  }
-);
-export const deleteContactDetails = asyncHandler(async (req, res) => {
-  
-    const {id} = req.params;
-    const data = await prospectsModel.findOneAndDelete({_id:id});
-   
-    if(!data)
-    {
-      res
-      .status(400)
-      .json({ status: true, message: "Data Deletion Failed !!"});
+    let filter = {}; // Default empty filter (fetch all leads)
+
+    if (startDate && endDate) {
+      // If both startDate and endDate are provided
+      filter = 
+        {
+          createdAt: {
+            $gte: startDate, // Convert string to Date
+            $lte: endDate
+          }
+          
+        };
+    } else if (startDate) {
+      // If only startDate is provided, get records from that date onward
+      filter.createdAt = { $gte: startDate };
+    } else if (endDate) {
+      // If only endDate is provided, get records up to that date
+      filter.createdAt = { $lte: endDate };
     }
-    res
-      .status(200)
-      .json({ status: true, message: "Data Deleted  successfully",data});
+
+    // Fetch filtered leads (or all leads if no filter applied)
+    const leads = await prospectsModel.find(filter).sort({ createdAt: -1 });
+        
+    res.status(200).json({
+      status: true,
+      message: "Data Fetched successfully",
+      data: leads,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error "+ error });
   }
-);
+});
+export const deleteContactDetails = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const data = await prospectsModel.findOneAndDelete({ _id: id });
+
+  if (!data) {
+    res.status(400).json({ status: true, message: "Data Deletion Failed !!" });
+  }
+  res
+    .status(200)
+    .json({ status: true, message: "Data Deleted  successfully", data });
+});

@@ -57,6 +57,11 @@ export const getProperties = asyncHandler(async (req, res) => {
   if (category) {
     addFilter(pipeline, "category", category);
   }
+
+  if (!category) {
+    addFilter(pipeline, "category", "urgent");
+  }
+
   if (state) {
     addFilter(pipeline, "state", state);
   }
@@ -142,11 +147,12 @@ export const addProperties = asyncHandler(async (req, res) => {
     auctionEndDate,
     auctionEndTime,
     applicationSubmissionDate,
+    auctionId,
   } = req?.body;
 
-  let auctionId = 200000;
-  const auctionsCount = await propertyModel.countDocuments();
-  auctionId += 1 + auctionsCount;
+  // let auctionId = 200000;
+  // const auctionsCount = await propertyModel.countDocuments();
+  // auctionId += 1 + auctionsCount;
 
   let uploadedBanner, uploadedDownloads;
 
@@ -163,7 +169,7 @@ export const addProperties = asyncHandler(async (req, res) => {
   const property = {
     auctionId,
     title,
-    category,
+    category: category || "urgent",
     state,
     city,
     area,
@@ -177,9 +183,9 @@ export const addProperties = asyncHandler(async (req, res) => {
     borrowerName,
     propertyType,
     auctionType,
-    auctionStartDate: new Date(auctionStartDate),
+    auctionStartDate: new Date(auctionStartDate || Date.now()),
     auctionStartTime,
-    auctionEndDate: new Date(auctionEndDate),
+    auctionEndDate: new Date(auctionEndDate || Date.now()),
     auctionEndTime,
     applicationSubmissionDate,
     downloads: uploadedDownloads.result,
@@ -206,6 +212,15 @@ export const updateProperty = asyncHandler(async (req, res) => {
       .json({ status: false, message: "Property Details Not Found !!" });
 
   const { banner, downloads } = req.files;
+  Object.keys(req.body).forEach((key) => {
+    console.log(chalk.bgBlue(req.body[key] == null, req.body[key]));
+
+    if (req.body[key] == null) {
+      console.log(chalk.bgBlue("hello runnign"));
+      // Checks for both null and undefined
+      delete req.body[key];
+    }
+  });
 
   if (banner && banner.length > 0) {
     query.banner = banner;
@@ -214,7 +229,7 @@ export const updateProperty = asyncHandler(async (req, res) => {
   if (downloads && downloads.length > 0) {
     query.downloads = downloads;
   }
-  console.log(chalk.bgYellowBright("query", JSON.stringify(query)));
+  console.log(chalk.bgYellowBright("query", JSON.stringify(req.body)));
 
   const updatedAuction = await propertyModel.findOneAndUpdate(
     { auctionId: id },
