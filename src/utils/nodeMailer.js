@@ -128,7 +128,7 @@ export const sendEnquiryMail = async (userData) => {
   // send mail with defined transport object
   const info = await transporter.sendMail({
     from: process.env.MAIL_ID, // sender address
-    to: [userData.email, process.env.MAIL_ID], // list of receivers
+    to: [userData.email,process.env.CLIENT_MAIL_INQUIRY,"shashanknegi@pearlorganisation.com","abhishek@pearlorganisation.com"], // list of receivers
     subject: `Loan Enquiry by ${userData.name}`, // Subject line
     html: htmlContent, // html body
   });
@@ -253,7 +253,6 @@ export const transactionSuccessMail = async (userData)=>{
     html: htmlContent, // html body
   });
 
-  console.log("Im Sending mail for successfull completion of payment info",info);
 }
 
 
