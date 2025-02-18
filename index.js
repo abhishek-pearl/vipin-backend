@@ -16,6 +16,7 @@ import morgan from "morgan";
 import { paymentRouter } from "./src/routes/payment.js";
 import bannerRouter from "./src/routes/banner.js";
 import adRouter from "./src/routes/ad.js";
+import adminContactRouter from "./src/routes/adminContact.js";
 
 dotenv.config();
 const app = express();
@@ -49,6 +50,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/v1/contact", contactRouter);
+app.use("/api/v1/adminContact", adminContactRouter);
 app.use("/api/v1/auction", auctionRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", userAuthRouter);
