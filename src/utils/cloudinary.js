@@ -23,7 +23,6 @@ export const uploadFile = async (myfiles) => {
     // if (files.some((f) => !f.path)) {
     //   throw new Error("Invalid file data provided.");
     // }
-
     const resultArr = await Promise.all(
       files.map(async (file) => {
         try {

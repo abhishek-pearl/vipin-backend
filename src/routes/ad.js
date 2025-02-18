@@ -11,7 +11,7 @@ import {
 
 const adRouter = express.Router();
 
-adRouter.route("/").get(getAllAd).post(upload.array("banner"), createAd);
+adRouter.route("/").get(getAllAd).post(upload.array("banner",4), createAd);
 
 adRouter
   .route("/:id")
