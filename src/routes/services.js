@@ -4,11 +4,14 @@ import {
   createService,
   deleteService,
   getAllServices,
+  getAllServicesTitle,
   getServiceById,
   updateService,
 } from "../controller/services.js";
 
 const router = express.Router();
+
+router.route('/serviceTitles').get(getAllServicesTitle);
 
 router
   .route("/")

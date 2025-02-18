@@ -20,7 +20,8 @@ const featuresSchema = new mongoose.Schema({
         type:{}
     },
     description:{
-        type:String
+        type:String,
+        maxlength:[140,"Max Length For Description is 140 Character"]
     },
     heading:{
         type:String
@@ -48,7 +49,7 @@ const serviceSchema = new mongoose.Schema({
     description:{
         type:String,
         minlength:[5,"Min Length For description 4!!"],
-        maxlength:[150,"Max Length For description 150 !!"],
+        maxlength:[140,"Max Length For description 140 !!"],
         required:true
     },
     serviceIcon:{
@@ -85,7 +86,7 @@ const serviceSchema = new mongoose.Schema({
             description:{
                 type:String,
                 minlength:[5,"Min Length For description 5!!"],
-                maxlength:[1000,"Max Length For description 500!!"],
+                maxlength:[140,"Max Length For description 140 Characters!!"],
                 required:true
             }
         },
@@ -96,7 +97,7 @@ const serviceSchema = new mongoose.Schema({
             heading:{
                 type:String,
                 minlength:[5,"Min Length For heading 5 !!"],
-                maxlength:[150,"Min Length For heading 150 !!"],
+                maxlength:[140,"Min Length For heading 140 characters !!"],
                 required:true
             },
             steps:[topSectionFeaturesSchema],

@@ -116,6 +116,15 @@ export const getAllServices = asyncHandler(async (req, res, next) => {
   });
 });
 
+export const getAllServicesTitle = asyncHandler(async (req, res, next) => {
+  const services = await serviceModel.find().select('serviceTitle').lean();
+  res.status(200).json({
+    status: true,
+    message: "Data Fetched Successfully ",
+    data: services,
+  });
+});
+
 // Get Service by ID
 export const getServiceById = asyncHandler(async (req, res) => {
   const service = await serviceModel.findById(req.params.id);
