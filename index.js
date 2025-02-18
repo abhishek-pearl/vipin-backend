@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import express from "express";
+import express, { urlencoded } from "express";
 import chalk from "chalk";
 import cors from "cors";
 import { mongoConnect } from "./src/config/db.js";
