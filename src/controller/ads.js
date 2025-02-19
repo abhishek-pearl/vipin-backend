@@ -6,42 +6,42 @@ import errorResponse from "../utils/errorHandler/errorResponse.js";
 import { adModel } from "../model/ad.js";
 
 export const createAd = asyncHandler(async (req, res, next) => {
+  let { urls } = req.body;
 
-  let {urls} = req.body;
-  
-  const urlsData = JSON?.parse(urls)||[];
-    if (req.files.length === 0) {
-      return next(new errorResponse("No file uploaded.", 400));
-    }
+  const urlsData = JSON?.parse(urls) || [];
+  if (req.files.length === 0) {
+    return next(new errorResponse("No file uploaded.", 400));
+  }
 
-    const uploadResult = await uploadFile(req.files);
+  const uploadResult = await uploadFile(req.files);
 
-    if (!uploadResult.status) {
-      return next(new errorResponse(uploadResult.message, 500));
-    }
-    
+  if (!uploadResult.status) {
+    return next(new errorResponse(uploadResult.message, 500));
+  }
 
-    if(uploadResult?.result?.length != urlsData?.length)
-    {
-      return res.status(400).json({success:false,message:"Total Number Of Images Should Be Equal To Total Number Of Urls !!"})
-    }
-
-    const url = uploadResult?.result?.map((item,index) => {
-      return {
-      secure_url:item?.secure_url,
-      ad_url:urlsData[index],
-      }
-    });
-
-    const bannerData = await adModel.create({ banner: url });
-
-    res.status(201).json({
-      success: true,
-      message: "Ad created successfully.",
-      data: bannerData,
+  if (uploadResult?.result?.length != urlsData?.length) {
+    return res.status(400).json({
+      success: false,
+      message:
+        "Total Number Of Images Should Be Equal To Total Number Of Urls !!",
     });
   }
-);
+
+  const url = uploadResult?.result?.map((item, index) => {
+    return {
+      secure_url: item?.secure_url,
+      ad_url: urlsData[index],
+    };
+  });
+
+  const bannerData = await adModel.create({ banner: url });
+
+  res.status(201).json({
+    success: true,
+    message: "Ad created successfully.",
+    data: bannerData,
+  });
+});
 
 export const getAllAd = asyncHandler(async (req, res, next) => {
   const banners = await adModel.find();

@@ -48,23 +48,24 @@ export const updateAdminContact = asyncHandler(async (req, res) => {
 
 export const updateActiveStatus = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const isExist = adminContact.findById({ _id: id });
+  const isExist = await adminContact.findOne({ _id: id }).lean();
+  console.log(isExist, "isExist");
   if (!isExist) {
     res
       .status(400)
       .json({ status: false, message: "Data not found!!", data: null });
   }
 
-  await adminContact.updateMany(
-    {},
-    {
-      activeAddress: false,
-    }
-  );
+  // await adminContact.updateMany(
+  //   {},
+  //   {
+  //     activeAddress: false,
+  //   }
+  // );
   const data = await adminContact.findByIdAndUpdate(
     { _id: id },
     {
-      activeAddress: true,
+      activeAddress: !isExist?.activeAddress,
     }
   );
   res.status(200).json({
@@ -75,7 +76,7 @@ export const updateActiveStatus = asyncHandler(async (req, res) => {
 });
 
 export const getSingleActiveContact = asyncHandler(async (req, res) => {
-  const data = await adminContact.findOne({ activeAddress: true });
+  const data = await adminContact.find({ activeAddress: true });
   res
     .status(200)
     .json({ status: true, message: "Contact Added successfully", data: data });
