@@ -5,7 +5,11 @@ import jwt from "jsonwebtoken";
 import { saveAccessTokenToCookie } from "../utils/index.js";
 // import { accessTokenValidity, refreshTokenValidity } from "../utils/index.js";
 import { authModel } from "../model/auth.js";
+import { sendForgetPassword } from "../utils/nodeMailer.js";
+import crypto from "crypto";
 
+import { configDotenv } from "dotenv";
+configDotenv();
 // -------------------------------------------------------------------------------------------
 // @desc - to fetch the users data
 // @route - GET /auth/login
@@ -48,7 +52,7 @@ export const login = asyncHandler(async (req, res) => {
 
   // Saving accessToken to the httpOnly Cookie
   saveAccessTokenToCookie(res, accessToken);
-
+  
   return res.status(200).json({
     success: true,
     message: "Logged in Successfully",
@@ -126,6 +130,34 @@ export const signup = asyncHandler(async (req, res) => {
 });
 
 export const registrationOrder = asyncHandler(async (req, res, next) => {});
+
+export const forgetPassword = asyncHandler(async (req,res,next)=>{
+ 
+  const {email} = req.body;
+
+  const isEmailExist = await authModel.findOne({email});
+
+
+  if(!isEmailExist)
+  {
+    return res.status(200).json({status:true,message:"Email Does Not Exists"});
+  }
+  
+  const token =  crypto.createHash('sha256').update(email).digest('hex');
+
+  isEmailExist.forgetPasswordToken = token;
+
+  await isEmailExist.save({runValidators:false});
+  const url = `${process.env.FRONTEND_URL}/changePassword/${token}`;
+  try{
+    await sendForgetPassword({email,url});
+
+  }catch(err)
+  {
+    return res.status(400).json({status:false,message:"Unable to Send Mail Please Check Mail !!"})
+  }
+  
+})
 
 // @desc - to fetch the users data
 // @route - POST /auth/logout
