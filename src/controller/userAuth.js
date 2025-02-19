@@ -10,6 +10,10 @@ import {
 // import { accessTokenValidity, refreshTokenValidity } from "../utils/index.js";
 import { userAuthModel } from "../model/userAuth.js";
 import errorResponse from "../utils/errorHandler/errorResponse.js";
+import { sendForgetPassword } from "../utils/nodeMailer.js";
+import crypto from "crypto";
+import { configDotenv } from "dotenv";
+configDotenv();
 
 // -------------------------------------------------------------------------------------------
 // @desc - to fetch the users data
@@ -177,3 +181,79 @@ export const getUserData = asyncHandler(async (req, res, next) => {
     .status(200)
     .json({ status: true, message: "User Data Fetched Successfully !!", user });
 });
+
+export const forgetPassword = asyncHandler(async (req,res,next)=>{
+ 
+  const {email} = req.body;
+
+  const isEmailExist = await userAuthModel.findOne({email});
+
+
+  if(!isEmailExist)
+  {
+    return res.status(200).json({status:true,message:"Email Does Not Exists"});
+  }
+  
+  const token =  await bcrypt.hash(email,12);
+  // crypto.createHash('sha256').update(email).digest('hex');
+
+  isEmailExist.forgetPasswordToken = token;
+
+  await isEmailExist.save({runValidators:false});
+  const url = `${process.env.FRONTEND_URL}/changePassword/${token}`;
+
+  console.log(url,token)
+  try{
+    await sendForgetPassword({email,url});
+    return res.status(200).json({status:false,message:"Please Check Mail For Forget Password Link !!"})
+  }catch(err)
+  {
+    return res.status(400).json({status:false,message:"Unable to Send Mail Please Check Your EMail !!"})
+  }
+  
+})
+
+
+export const verifyForgetPassword = asyncHandler(async (req,res,next)=>{
+  const {token} = req.params;
+  const {email,password} = req.body; 
+
+   const emailExists = await userAuthModel.findOne({email});
+   
+   if(!email || !password)
+   {
+    return res.status(400).json({status:false,message:"Email/Password Not Provided !!"});
+
+   }
+
+   if(!emailExists)
+   {
+    return res.status(400).json({status:false,message:"Email Does Not Exists !!"});
+   }
+
+
+  if(bcrypt.compare(token,emailExists?.forgetPasswordToken))
+  {
+    const hashPassword = await bcrypt.hash(password, 10);
+    emailExists.password = hashPassword;
+    emailExists.forgetPasswordToken = undefined;
+    await emailExists.save({runValidators:false});
+    res.clearCookie("VIPINBHAIIKA_ACCESS_TOKEN");
+    res.clearCookie("DHANLAXMI_ACCESS_TOKEN");
+    res.clearCookie("DHANLAXMI_REFRESH_TOKEN");
+    return res.status(200).json({status:false,message:"Password Changed Successfully !!"});
+
+
+  }
+  else{
+    return res.status(400).json({status:false,message:"Wrong Url Please Try Again !!"});
+
+  }
+
+  
+
+
+
+
+
+})

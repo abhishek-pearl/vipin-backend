@@ -13,6 +13,7 @@ const authSchema = new mongoose.Schema({
     type: String,
     required: [true, "email is required"],
   },
+  forgetPasswordToken:String
 
 
 });
