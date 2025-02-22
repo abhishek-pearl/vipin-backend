@@ -51,9 +51,8 @@ export const submitContactForm = asyncHandler(async (req, res) => {
   }
 });
 export const getContactDetails = asyncHandler(async (req, res) => {
-  const data = await prospectsModel.find().lean();
   try {
-    let { startDate, endDate } = req.query;
+    let { startDate, endDate ,sort } = req.query;
 
     let filter = {}; // Default empty filter (fetch all leads)
 
@@ -76,6 +75,7 @@ export const getContactDetails = asyncHandler(async (req, res) => {
     }
 
     // Fetch filtered leads (or all leads if no filter applied)
+
     const leads = await prospectsModel.find(filter).sort({ createdAt: -1 });
         
     res.status(200).json({

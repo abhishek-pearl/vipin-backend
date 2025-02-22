@@ -2,12 +2,12 @@ import express from "express";
 import {
   addProperties,
   deleteProperty,
+  getAllProperties,
   getProperties,
   getProperty,
   updateProperty,
 } from "../controller/auction.js";
 import {
-  verifyTokenMiddleware,
   verifyTokenMiddlewareAuction,
 } from "../middleware/verifyTokenMiddleware.js";
 import { upload } from "../utils/multer.js";
@@ -26,6 +26,7 @@ auctionRouter
   );
 
 auctionRouter.route("/properties").get(getProperties);
+auctionRouter.route("/properties/admin").get(getAllProperties);
 auctionRouter
   .route("/:id")
   .get(verifyTokenMiddlewareAuction, getProperty)

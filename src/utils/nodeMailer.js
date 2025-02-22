@@ -129,7 +129,7 @@ export const sendEnquiryMail = async (userData) => {
   const info = await transporter.sendMail({
     from: process.env.MAIL_ID, // sender address
     to: [userData.email,process.env.CLIENT_MAIL_INQUIRY,"shashanknegi@pearlorganisation.com","abhishek@pearlorganisation.com"], // list of receivers
-    subject: `Loan Enquiry by ${userData.name}`, // Subject line
+    subject: `Get Loan`, // Subject line
     html: htmlContent, // html body
   });
 };
@@ -356,7 +356,7 @@ export const sendContactMail = async (userData) => {
       "shashanknegi@pearlorganisation.com",
       "abhishek@pearlorganisation.com",
     ], // list of receivers
-    subject: `Contacted by ${userData.name} `, // Subject line
+    subject: `Contacted Contact Us `, // Subject line
     html: htmlContent, // html body
   });
 };

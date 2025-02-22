@@ -40,11 +40,7 @@ export const getProperties = asyncHandler(async (req, res) => {
     maxPrice,
   } = req.query;
 
-  // if (Object.keys(req.query).length <= 1) {
-  //   return res
-  //     .status(200)
-  //     .json({ status: false, message: "Data Fetched Successfully", data: [] });
-  // }
+
 
   const limit = req?.query?.limit || 25;
   const page = req?.query?.page || 1;
@@ -259,3 +255,11 @@ export const deleteProperty = asyncHandler(async (req, res) => {
     .status(200)
     .json({ status: true, message: "Property Deleted Successfully" });
 });
+
+
+export const getAllProperties = asyncHandler(async (req,res,next)=>{
+  const data = await propertyModel.find();
+
+  return res.status(200).json({status:true,message:"Data Fetched Successfully !!",data})
+ 
+})
