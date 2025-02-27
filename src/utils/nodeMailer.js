@@ -128,7 +128,12 @@ export const sendEnquiryMail = async (userData) => {
   // send mail with defined transport object
   const info = await transporter.sendMail({
     from: process.env.MAIL_ID, // sender address
-    to: [userData.email,process.env.CLIENT_MAIL_INQUIRY,"shashanknegi@pearlorganisation.com","abhishek@pearlorganisation.com"], // list of receivers
+    to: [
+      userData.email,
+      process.env.CLIENT_MAIL_INQUIRY,
+      "shashanknegi@pearlorganisation.com",
+      "abhishek@pearlorganisation.com",
+    ], // list of receivers
     subject: `Loan Enquiry by ${userData.name}`, // Subject line
     html: htmlContent, // html body
   });
@@ -256,8 +261,6 @@ export const transactionSuccessMail = async (userData) => {
     subject: `Payment Status  ${userData.transactionStatus}`, // Subject line
     html: htmlContent, // html body
   });
-
-
 };
 
 // contact mail
@@ -363,7 +366,6 @@ export const sendContactMail = async (userData) => {
 
 //verification password mail
 
-
 export const sendForgetPassword = async (userData) => {
   const htmlContent = `
       <!DOCTYPE html>
@@ -452,7 +454,7 @@ export const sendForgetPassword = async (userData) => {
     <div class="email-container">
       <!-- Header Section -->
       <div class="header">
-        <h1>Reset Your Travel Monk Password</h1>
+        <h1>Reset Your SDLK Account Password</h1>
       </div>
       <!-- Content Section -->
       <div class="content">
@@ -508,4 +510,3 @@ export const sendForgetPassword = async (userData) => {
     html: htmlContent, // html body
   });
 };
-
