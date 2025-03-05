@@ -38,13 +38,19 @@ export const getProperties = asyncHandler(async (req, res) => {
     auctionEnd,
     minPrice,
     maxPrice,
+    admin,
   } = req.query;
-
+  console.log(admin);
   // if (Object.keys(req.query).length <= 1) {
   //   return res
   //     .status(200)
   //     .json({ status: false, message: "Data Fetched Successfully", data: [] });
   // }
+
+  if (Boolean(admin)) {
+    const data = await propertyModel.find({}).lean();
+    return res.status(200).json({ status: "true", data, message: "Success!!" });
+  }
 
   const limit = req?.query?.limit || 25;
   const page = req?.query?.page || 1;
