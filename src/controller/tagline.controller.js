@@ -97,3 +97,36 @@ export const updateTagline = asyncHandler(async (req, res) => {
         })
      }
 })
+
+//Activate the tagline 
+export const activateTagline = asyncHandler(async (req, res) => {
+    const {_id} = req?.params
+    try {
+        const data = await TaglineModel.findOneAndUpdate({isActive : true} , {
+            isActive : false
+        },);
+
+
+        const updateTageline = await TaglineModel.findOneAndUpdate(
+            {_id},
+            {
+                isActive : true
+            },
+            {
+                new : true
+            }
+        )
+        res.status(200).json({
+            status : true,
+            message : "Tagline Activated successfully",
+            data : updateTageline
+        })
+
+    } catch(error){
+        console.log("error in Updating the tagline" , error)
+        res.status(500).json({
+            status : false,
+            message : error.message
+        })
+    }
+})
