@@ -11,6 +11,11 @@ const taglineSchema = new mongoose.Schema({
         required: true,
         trim: true,
     },
+    isActive:{
+        type:Boolean,
+        default:false,
+    }
+
 }, { timestamps: true });
 
 
