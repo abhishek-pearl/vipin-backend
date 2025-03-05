@@ -17,6 +17,7 @@ import { paymentRouter } from "./src/routes/payment.js";
 import bannerRouter from "./src/routes/banner.js";
 import adRouter from "./src/routes/ad.js";
 import adminContactRouter from "./src/routes/adminContact.js";
+import taglineRouter from "./src/routes/tagline.route.js";
 
 dotenv.config();
 const app = express();
@@ -59,6 +60,8 @@ app.use("/api/v1/services", serviceRoutes);
 app.use("/api/v1/payment", paymentRouter);
 app.use("/api/v1/banner", bannerRouter);
 app.use("/api/v1/ad", adRouter);
+app.use("/api/v1/tagline", taglineRouter); //  /api/v1/tagline/get  or /add
+
 app.use(error);
 app.listen(PORT, () => {
   console.log(chalk.bgBlue(`Server Listening to PORT ${PORT}`));
